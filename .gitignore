@@ -1,0 +1,15 @@
+# Dependencies
+**/node_modules/
+**/dist/
+**/build/
+**/coverage/
+
+# Environment Variables (Security)
+.env
+.env.*
+**/.env
+
+# IDE Settings
+.vscode/
+*.log
+.DS_Store
