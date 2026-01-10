@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:ci": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "jest --watch",

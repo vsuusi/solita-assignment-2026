@@ -1,5 +1,6 @@
-version: '3.1'
+version: "3.1"
 services:
+  # database service
   db:
     image: postgres
     restart: always
@@ -8,12 +9,35 @@ services:
       POSTGRES_PASSWORD: academy
       POSTGRES_DB: electricity
     build:
-      context: .
+      context: ./db
       dockerfile: Dockerfile
     ports:
       - 5432:5432
+    # probs need volumes
+
+  # adminer service for DB management
   adminer:
     image: adminer
     restart: always
     ports:
-      - 8088:8080
+      - 8090:8080
+
+  # backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+
+  # frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      - backend
