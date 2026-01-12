@@ -61,13 +61,15 @@ export const electricityService = {
 
       if (consumption === null) {
         warnings.totalConsumptionWarning = `Consumption amount is null for some entries on date ${date}.`;
-      }
-      if (production === null) {
-        warnings.totalProductionWarning = `Production amount is null for some entries on date ${date}.`;
+      } else {
+        totalElectricityConsumption += consumption;
       }
 
-      totalElectricityConsumption += consumption;
-      totalElectricityProduction += production;
+      if (production === null) {
+        warnings.totalProductionWarning = `Production amount is null for some entries on date ${date}.`;
+      } else {
+        totalElectricityProduction += production;
+      }
     });
 
     if (totalElectricityConsumption === 0) {
@@ -77,8 +79,13 @@ export const electricityService = {
       warnings.totalProductionWarning = `No production data found for date ${date}.`;
     }
 
-    const avgPrice =
-      Math.round((totalPrice / (rowCount - nullPriceRows)) * 100) / 100;
+    const validPriceCount = rowCount - nullPriceRows;
+    let avgPrice = 0;
+    if (validPriceCount === 0) {
+      warnings.averagePriceWarning = `All price entries are null for date ${date}.`;
+    } else {
+      avgPrice = totalPrice / validPriceCount;
+    }
 
     // 4. hour with most elec consump compared to prod
 

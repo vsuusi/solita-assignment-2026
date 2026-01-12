@@ -8,7 +8,7 @@ export const electricityRepository = {
     page: number,
     limit: number,
     sortBy: string,
-    sortOrder: "ASC" | "DESC"
+    sortOrder: "ASC" | "DESC" = "ASC"
   ) {
     const sortMap: Record<string, string> = {
       date: "1",
@@ -20,7 +20,7 @@ export const electricityRepository = {
 
     const pageInt = Math.max(1, Number(page) || 1);
     const offset = (pageInt - 1) * limit;
-    const orderBy = sortMap[sortBy];
+    const orderBy = sortMap[sortBy] || "1";
 
     const query = `
       SELECT

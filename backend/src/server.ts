@@ -6,12 +6,6 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-
-  testDbConnection();
-});
-
 async function testDbConnection() {
   try {
     const db_client = await pool.connect();
@@ -22,3 +16,12 @@ async function testDbConnection() {
     process.exit(1);
   }
 }
+
+async function startServer() {
+  await testDbConnection();
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+startServer();
