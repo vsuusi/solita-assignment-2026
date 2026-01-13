@@ -1,5 +1,5 @@
 import { electricityRepository } from "../repositories/electricityRepository.js";
-import {
+import type {
   ElectricityData,
   SingleDayStats,
   DailyListItem,
