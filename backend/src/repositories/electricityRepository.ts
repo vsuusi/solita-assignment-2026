@@ -62,7 +62,17 @@ export const electricityRepository = {
   },
 
   async getHourlyDataForDate(date: string): Promise<ElectricityData[]> {
-    const query = `SELECT * FROM "electricitydata" WHERE date = $1 ORDER BY "starttime" ASC;`;
+    const query = `
+      SELECT 
+        id,
+        date::text, 
+        "starttime",
+        "productionamount",
+        "consumptionamount",
+        "hourlyprice" 
+      FROM "electricitydata" 
+      WHERE date = $1 
+      ORDER BY "starttime" ASC;`;
     const sql_resp = await pool.query(query, [date]);
     return sql_resp.rows;
   },
