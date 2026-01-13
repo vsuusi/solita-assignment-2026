@@ -1,5 +1,5 @@
 import pool from "../db.js";
-//import { ElectricityData } from "../types.js";
+import { ElectricityData } from "../types.js";
 
 // data retrieval
 
@@ -10,21 +10,18 @@ export const electricityRepository = {
     sortBy: string,
     sortOrder: "ASC" | "DESC" = "ASC"
   ) {
+    const offset = (Math.max(1, page) - 1) * limit;
     const sortMap: Record<string, string> = {
-      date: "1",
-      totalProductionMwh: "2",
-      totalConsumptionKwh: "3",
-      avgPrice: "4",
-      hoursCount: "5",
+      date: "date",
+      totalProductionMwh: 'SUM("productionamount")',
+      totalConsumptionKwh: 'SUM("consumptionamount")',
+      avgPrice: 'AVG("hourlyprice")',
     };
-
-    const pageInt = Math.max(1, Number(page) || 1);
-    const offset = (pageInt - 1) * limit;
-    const orderBy = sortMap[sortBy] || "1";
+    const orderBy = sortMap[sortBy] || "date";
 
     const query = `
       SELECT
-        date,
+        date::text,
         SUM("productionamount") AS "totalProductionMwh",
         SUM("consumptionamount") AS "totalConsumptionKwh",
         AVG("hourlyprice") AS "avgPrice",
@@ -35,24 +32,40 @@ export const electricityRepository = {
       LIMIT $1 OFFSET $2;
     `;
 
-    try {
-      const result = await pool.query(query, [limit, offset]);
-      return {
-        result,
-        meta: {
-          page: pageInt,
-          limit: limit,
-        },
-      };
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
+    const sql_resp = await pool.query(query, [limit, offset]);
+
+    return {
+      rows: sql_resp.rows,
+      meta: {
+        page,
+        limit,
+      },
+    };
   },
-  async getHourlyDataForDate(date: string) {
-    const query =
-      'SELECT * FROM "electricitydata" WHERE date = $1 ORDER BY "starttime" ASC;';
-    const result = await pool.query(query, [date]);
-    return result;
+  async getHourlyDataForDates(dates: string[]): Promise<ElectricityData[]> {
+    if (dates.length === 0) return [];
+
+    // Fetches all hours for the 10 days on the current page
+    const query = `
+      SELECT 
+        id,
+        date::text, 
+        "starttime",
+        "productionamount",
+        "consumptionamount",
+        "hourlyprice"
+      FROM "electricitydata" 
+      WHERE date::text = ANY($1) 
+      ORDER BY date, "starttime" ASC;
+    `;
+    const sql_resp = await pool.query(query, [dates]);
+    return sql_resp.rows;
+  },
+
+  // 3. Single Date Fetch
+  async getHourlyDataForDate(date: string): Promise<ElectricityData[]> {
+    const query = `SELECT * FROM "electricitydata" WHERE date = $1 ORDER BY "starttime" ASC;`;
+    const sql_resp = await pool.query(query, [date]);
+    return sql_resp.rows;
   },
 };

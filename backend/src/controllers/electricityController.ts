@@ -16,7 +16,6 @@ export const getDailyElectricityList = async (req: Request, resp: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-
     const allowedSortFields = [
       "date",
       "starttime",
@@ -58,10 +57,10 @@ export const getSingleDayElectricityData = async (
         .json({ error: "Invalid date. Expected YYYY-MM-DD." });
     }
 
-    const result = await electricityService.getSingleDay(date as string);
+    const result = await electricityService.getSingleDay(date);
     resp.json(result);
-  } catch (e) {
-    if (e instanceof Error && e.message.startsWith("No data found")) {
+  } catch (e: any) {
+    if (e.message.startsWith("No data found")) {
       return resp.status(404).json({ error: e.message });
     }
     console.error("error: ", e);

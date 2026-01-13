@@ -1,27 +1,37 @@
 // lowercase instead of pascalCase to match db structure
 export interface ElectricityData {
   id: number;
-  date: Date;
-  starttime: Date;
-  productionamount: number; // MWh/h
-  consumptionamount: number; // kWh
-  hourlyprice: number;
+  date: string;
+  starttime: string;
+  productionamount: number | null; // MWh/h
+  consumptionamount: number | null; // kWh
+  hourlyprice: number | null; //
+}
+
+export interface DataQuality {
+  isValid: boolean;
+  missingRows: number;
+  issues: string[];
+}
+
+export interface DailyListItem {
+  date: string;
+  totalProductionMwh: number;
+  totalConsumptionKwh: number;
+  avgPrice: number;
+  longestNegativeStreak: number;
+  quality: DataQuality;
 }
 
 export interface SingleDayStats {
-  totalProductionMwh: number;
-  totalConsumptionMwh: number;
-  averagePrice: number;
-  hourWithMaxConsumption: string; // time string
-  cheapestHours: Array<string>; // time strings
-  warnings?: SingleDayWarnings;
-}
-
-export interface SingleDayWarnings {
-  rowCountWarning?: string;
-  totalProductionWarning?: string;
-  totalConsumptionWarning?: string;
-  averagePriceWarning?: string;
-  hourWithMaxConsumptionWarning?: string;
-  cheapestHoursWarning?: string;
+  date: string;
+  summary: {
+    totalProductionMwh: number;
+    totalConsumptionKwh: number;
+    avgPrice: number;
+    maxDiffHour: { time: string; value: number } | null;
+    cheapestHours: { time: string; price: number }[];
+  };
+  quality: DataQuality;
+  hourlyData: ElectricityData[];
 }
