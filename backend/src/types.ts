@@ -34,7 +34,7 @@ export interface SingleDayStats {
     totalProductionMwh: number;
     totalConsumptionKwh: number;
     avgPrice: number;
-    maxDiffHour: { time: string; value: number } | null;
+    maxDiffHour: { time: string; valueKwh: number } | null;
     cheapestHours: { time: string; price: number }[];
   };
   quality: DataQuality;

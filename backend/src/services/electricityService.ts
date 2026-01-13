@@ -114,10 +114,10 @@ export const electricityService = {
 
       const prodKwh = (row.productionamount || 0) * 1000;
       const consKwh = row.consumptionamount || 0;
-      const diff = consKwh - prodKwh;
+      const diffKwh = consKwh - prodKwh;
 
-      if (diff > maxDiff) {
-        maxDiff = diff;
+      if (diffKwh > maxDiff) {
+        maxDiff = diffKwh;
         maxDiffTime = row.starttime;
       }
     });
@@ -148,7 +148,7 @@ export const electricityService = {
         avgPrice: avgPrice,
         maxDiffHour: {
           time: maxDiffTime,
-          value: maxDiff,
+          valueKwh: maxDiff,
         },
         cheapestHours: sortedByPrice,
       },

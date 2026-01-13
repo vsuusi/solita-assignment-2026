@@ -96,7 +96,7 @@ describe("Electricity Service", () => {
       expect(result.summary.avgPrice).toBeCloseTo(2.33, 2); // (10 - 5 + 2) / 3
 
       expect(result.summary.maxDiffHour?.time).toBe("01:00");
-      expect(result.summary.maxDiffHour?.value).toBe(90);
+      expect(result.summary.maxDiffHour?.valueKwh).toBe(90);
 
       expect(result.summary.cheapestHours[0].price).toBe(-5);
       expect(result.summary.cheapestHours[1].price).toBe(2);
