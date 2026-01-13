@@ -23,6 +23,11 @@ export interface DailyListItem {
   quality: DataQuality;
 }
 
+export interface DailyListMeta {
+  page: number;
+  limit: number;
+}
+
 export interface SingleDayStats {
   date: string;
   summary: {

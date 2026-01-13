@@ -3,13 +3,14 @@ import {
   ElectricityData,
   SingleDayStats,
   DailyListItem,
+  DailyListMeta,
   DataQuality,
 } from "../types.js";
 
 // warnings for missing data
 function analyzeDataQuality(rows: ElectricityData[]): DataQuality {
   const issues: string[] = [];
-  let missingRows = 24 - rows.length;
+  const missingRows = 24 - rows.length;
 
   if (missingRows > 0) {
     issues.push(`Missing ${missingRows} hourly data entries.`);
@@ -60,7 +61,7 @@ export const electricityService = {
     limit: number,
     sortBy: string,
     sortOrder: "ASC" | "DESC"
-  ): Promise<{ data: DailyListItem[]; meta: any }> {
+  ): Promise<{ data: DailyListItem[]; meta: DailyListMeta }> {
     const resp = await electricityRepository.getDailySummaries(
       page,
       limit,
@@ -88,10 +89,6 @@ export const electricityService = {
 
     return { data: enrichedRows, meta: resp.meta };
   },
-
-  // *****************************************************
-  // Singe day stats: need work here
-  // *****************************************************
 
   async getSingleDay(date: string): Promise<SingleDayStats> {
     const rows = await electricityRepository.getHourlyDataForDate(date);
@@ -126,7 +123,9 @@ export const electricityService = {
     });
 
     const avgPrice =
-      Math.round(Number(totalPrice / validPriceCount) * 100) / 100;
+      validPriceCount > 0
+        ? Math.round((totalPrice / validPriceCount) * 100) / 100
+        : 0;
 
     const sortedByPrice = [...rows]
       // filter out nulls

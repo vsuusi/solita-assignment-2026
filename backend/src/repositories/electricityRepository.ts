@@ -45,7 +45,6 @@ export const electricityRepository = {
   async getHourlyDataForDates(dates: string[]): Promise<ElectricityData[]> {
     if (dates.length === 0) return [];
 
-    // Fetches all hours for the 10 days on the current page
     const query = `
       SELECT 
         id,
@@ -62,7 +61,6 @@ export const electricityRepository = {
     return sql_resp.rows;
   },
 
-  // 3. Single Date Fetch
   async getHourlyDataForDate(date: string): Promise<ElectricityData[]> {
     const query = `SELECT * FROM "electricitydata" WHERE date = $1 ORDER BY "starttime" ASC;`;
     const sql_resp = await pool.query(query, [date]);
