@@ -1,21 +1,24 @@
-// need to ensure cons and prod units are consistent
-export interface ElectricityDataRow {
-  avgPrice: number;
+export interface DataQuality {
+  isValid: boolean;
+  missingRows: number;
+  issues: string[];
+}
+
+export interface DailyListItem {
   date: string;
-  hoursCount: number;
-  totalConsumptionMwh: number;
   totalProductionMwh: number;
+  totalConsumptionKwh: number;
+  avgPrice: number;
+  longestNegativeStreak: number;
+  quality: DataQuality;
 }
 
-export interface ApiResult {
-  rows: ElectricityDataRow[];
-  rowCount: number;
-}
-
-export interface ApiResponse {
-  result: ApiResult;
+export interface DailyListResponse {
+  data: DailyListItem[];
   meta: {
-    limit: number;
     page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
   };
 }

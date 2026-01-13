@@ -6,27 +6,27 @@ import {
   Link,
 } from "react-router-dom";
 
+import "./app.css";
+
 import DashboardPage from "./pages/DashboardPage";
 import SingleDayPage from "./pages/SingleDayPage";
 
 const Layout = () => {
   return (
     <div className="app-container">
-      <header style={{ padding: "1rem", borderBottom: "1px solid #ccc" }}>
+      <header>
         <nav>
-          <Link to="/" style={{ marginRight: "1rem", fontWeight: "bold" }}>
+          <Link to="/" className="nav-link">
             ⚡️ Electricity App
           </Link>
         </nav>
       </header>
 
-      <main style={{ padding: "2rem" }}>
+      <main>
         <Outlet />
       </main>
 
-      <footer
-        style={{ marginTop: "auto", padding: "1rem", background: "#f5f5f5" }}
-      >
+      <footer>
         <small>© 2026 Dev Academy Exercise</small>
       </footer>
     </div>

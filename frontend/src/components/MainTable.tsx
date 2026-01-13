@@ -1,71 +1,142 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
+import type { DailyListItem, DailyListResponse } from "../types";
 import { electricityApi } from "../api/electricityApi";
-import type { ElectricityDataRow, ApiResponse, ApiResult } from "../types";
+import Pagination from "./Pagination";
 
 import "./MainTable.css";
 
 function MainTable() {
-  const [data, setData] = useState<ElectricityDataRow[]>([]);
+  const [data, setData] = useState<DailyListItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [sortBy, setSortBy] = useState<string>("date");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
+
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const resp: ApiResponse =
-          await electricityApi.getDailyElectricityList();
+        const resp: DailyListResponse =
+          await electricityApi.getDailyElectricityList(
+            page,
+            10,
+            sortBy,
+            sortOrder
+          );
         console.log("Full response:", resp);
-        if (resp.result && resp.result.rows) {
-          setData(resp.result.rows);
+        if (resp && resp.data) {
+          setData(resp.data);
+          setTotalPages(resp.meta.totalPages);
         }
       } catch (e) {
+        setError("Failed to fetch data");
         console.error("error: ", e);
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [sortBy, sortOrder, page]);
 
-  if (loading) return <p>Loading data...</p>;
+  const handleSortChange = (column: string) => {
+    if (sortBy === column) {
+      setSortOrder((prev) => (prev === "ASC" ? "DESC" : "ASC"));
+    } else {
+      setSortBy(column);
+      setSortOrder("ASC");
+    }
+    setPage(1);
+  };
+
+  const renderSortArrow = (column: string) => {
+    if (sortBy !== column) return <span className="sort-arrow">↕</span>; // Passive arrow
+    return sortOrder === "ASC" ? " ▲" : " ▼";
+  };
+
+  if (error) return <p>Error loading data: {error}</p>;
 
   return (
     <div className="wrapper">
       <h1>Main table</h1>
-      <p>Electricity data</p>
-      {data.length > 0 ? (
-        <table className="main-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Avg Price (snt/kWh)</th>
-              <th>Consumption (kWh)</th>
-              <th>Production (MWh)</th>
-              <th>Hours</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {data.map((row) => (
-              <tr key={row.date}>
-                {/* 1. Format Date to be readable */}
-                <td>{new Date(row.date).toLocaleDateString()}</td>
-
-                {/* 2. Format Price to 2 decimals, handle null */}
-                <td>{row.avgPrice !== null ? row.avgPrice.toFixed(2) : "-"}</td>
-
-                {/* 3. Handle null consumption */}
-                <td>{row.totalConsumptionMwh ?? "-"}</td>
-
-                <td>{row.totalProductionMwh}</td>
-                <td>{row.hoursCount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <p>Click on a row to view details</p>
+      {loading && data.length === 0 ? (
+        <h3>Loading initial data...</h3>
       ) : (
-        <h3>No data available</h3>
+        <>
+          <table className="main-table" style={{ opacity: loading ? 0.5 : 1 }}>
+            <thead>
+              <tr>
+                <th onClick={() => handleSortChange("date")}>
+                  Date {renderSortArrow("date")}
+                </th>
+                <th>Status</th>
+                <th onClick={() => handleSortChange("avgPrice")}>
+                  Avg Price {renderSortArrow("avgPrice")}
+                </th>
+                <th onClick={() => handleSortChange("totalConsumptionKwh")}>
+                  Consumption (MWh) {renderSortArrow("totalConsumptionKwh")}
+                </th>
+                <th onClick={() => handleSortChange("totalProductionMwh")}>
+                  Production (MWh) {renderSortArrow("totalProductionMwh")}
+                </th>
+                <th>Neg. Streak (h)</th> {/* need to add sorting */}
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {data.map((row) => (
+                <tr key={row.date}>
+                  <td>{row.date}</td>
+                  <td>
+                    {row.quality.isValid ? (
+                      <span className="badge success">OK</span>
+                    ) : (
+                      <span
+                        className="badge warning"
+                        title={row.quality.issues.join("\n")} // Hover to see issues
+                      >
+                        ⚠️ Issues
+                      </span>
+                    )}
+                  </td>
+                  <td>{row.avgPrice?.toFixed(2) ?? "-"}</td>
+                  <td>
+                    {row.totalConsumptionKwh
+                      ? (row.totalConsumptionKwh / 1000).toLocaleString()
+                      : "-"}
+                  </td>
+                  <td>{row.totalProductionMwh?.toLocaleString() ?? "-"}</td>
+                  <td style={{ textAlign: "center" }}>
+                    {row.longestNegativeStreak > 0 ? (
+                      <span style={{ color: "green", fontWeight: "bold" }}>
+                        {row.longestNegativeStreak} h
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </td>
+                  <td>
+                    <Link to={`/day/${row.date}`} className="view-btn">
+                      View Details
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={(newPage) => setPage(newPage)}
+          />
+        </>
       )}
     </div>
   );

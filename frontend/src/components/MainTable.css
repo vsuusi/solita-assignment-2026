@@ -2,6 +2,7 @@
   width: 100%;
   border-collapse: collapse; /* Removes double borders */
   margin-top: 20px;
+  transition: opacity 0.3s ease; /* Smooth transition for loading state */
 }
 
 .main-table th,
@@ -14,6 +15,9 @@
 .main-table th {
   background-color: #f4f4f4;
   font-weight: bold;
+  cursor: pointer; /* Shows hand icon */
+  user-select: none; /* Prevents text selection when double clicking */
+  transition: background-color 0.2s;
 }
 
 .main-table tr:nth-child(even) {
@@ -22,4 +26,46 @@
 
 .main-table tr:hover {
   background-color: #f1f1f1;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.badge.success {
+  background-color: #e6fffa;
+  color: #047857;
+}
+
+.badge.warning {
+  background-color: #fffbeb;
+  color: #b45309;
+  cursor: help; /* Shows '?' cursor on hover */
+}
+
+/* View Button */
+.view-btn {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.view-btn:hover {
+  text-decoration: underline;
+}
+
+/* Table Alignment */
+.main-table th,
+.main-table td {
+  text-align: left;
+  padding: 12px;
+}
+
+.sort-arrow {
+  font-size: 0.8em;
+  margin-left: 5px;
+  color: #999;
 }

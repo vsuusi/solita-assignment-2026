@@ -1,0 +1,32 @@
+body {
+  /* Reset default margin and padding */
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+header {
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.nav-link {
+  margin-right: 1rem;
+  font-weight: bold;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+  margin-inline: auto;
+}
+
+footer {
+  padding: 1rem;
+  background-color: #f9f9f9;
+}

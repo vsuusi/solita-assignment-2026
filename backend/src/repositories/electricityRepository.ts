@@ -1,3 +1,4 @@
+import { count } from "node:console";
 import pool from "../db.js";
 import { ElectricityData } from "../types.js";
 
@@ -34,11 +35,19 @@ export const electricityRepository = {
 
     const sql_resp = await pool.query(query, [limit, offset]);
 
+    // count query for pagination
+    // count query for this project's db takes approx 0.0005 seconds, no need for separate optimization
+    const countQuery = `SELECT COUNT(DISTINCT date)::int as total FROM "electricitydata"`;
+    const count_resp = await pool.query(countQuery);
+    const totalRows = count_resp.rows[0].total || 0;
+    const totalPages = Math.ceil(totalRows / limit);
+
     return {
       rows: sql_resp.rows,
       meta: {
         page,
         limit,
+        totalPages: totalPages,
       },
     };
   },

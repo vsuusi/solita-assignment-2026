@@ -26,6 +26,7 @@ export interface DailyListItem {
 export interface DailyListMeta {
   page: number;
   limit: number;
+  totalPages: number;
 }
 
 export interface SingleDayStats {
