@@ -23,7 +23,7 @@ export interface DailyListResponse {
   };
 }
 
-export interface CheapestHours {
+export interface TopHours {
   time: string;
   price: number;
 }
@@ -47,7 +47,8 @@ export interface SingleDayResponse {
   hourlyData: HourlyData[];
   summary: {
     avgPrice: number;
-    cheapestHours: CheapestHours[];
+    cheapestHours: TopHours[];
+    mostExpensiveHours: TopHours[];
     maxDiffHour: MaxDiffHour;
     totalConsumptionKwh: number;
     totalProductionMwh: number;

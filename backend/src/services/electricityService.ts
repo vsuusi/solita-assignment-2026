@@ -127,13 +127,19 @@ export const electricityService = {
         ? Math.round((totalPrice / validPriceCount) * 100) / 100
         : 0;
 
-    const sortedByPrice = [...rows]
-      // filter out nulls
+    const cheapestHours = [...rows]
       .filter((row) => row.hourlyprice !== null)
-      // sort ascending
       .sort((a, b) => (a.hourlyprice as number) - (b.hourlyprice as number))
-      // take cheapest 3
       .slice(0, 3)
+      .map((row) => ({
+        time: row.starttime,
+        price: row.hourlyprice as number,
+      }));
+
+    const mostExpensiveHours = [...rows]
+      .filter((row) => row.hourlyprice !== null)
+      .sort((a, b) => (a.hourlyprice as number) - (b.hourlyprice as number))
+      .slice(-3)
       .map((row) => ({
         time: row.starttime,
         price: row.hourlyprice as number,
@@ -150,7 +156,8 @@ export const electricityService = {
           time: maxDiffTime,
           valueKwh: maxDiff,
         },
-        cheapestHours: sortedByPrice,
+        cheapestHours: cheapestHours,
+        mostExpensiveHours: mostExpensiveHours,
       },
       quality: analyzeDataQuality(rows),
       hourlyData: rows,

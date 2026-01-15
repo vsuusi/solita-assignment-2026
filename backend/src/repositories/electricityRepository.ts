@@ -28,7 +28,7 @@ export const electricityRepository = {
         COUNT(id) AS "hoursCount"
       FROM "electricitydata"
       GROUP BY date
-      ORDER BY ${orderBy} ${sortOrder}
+      ORDER BY ${orderBy} ${sortOrder} NULLS LAST
       LIMIT $1 OFFSET $2;
     `;
 

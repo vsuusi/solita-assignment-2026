@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import type { SingleDayResponse, CheapestHours } from "../types";
+import type { SingleDayResponse, TopHours } from "../types";
 
 import "./DetailedView.css";
 
@@ -47,8 +47,8 @@ function DetailedView() {
   const peakCons = findPeakHour(data.hourlyData, "consumptionamount");
   const peakProd = findPeakHour(data.hourlyData, "productionamount");
 
-  const cheapestHours: CheapestHours[] = data.summary.cheapestHours;
-  // const mostExpensiveHours = NEED TO IMPLEMENT IN BACKEND
+  const cheapestHours: TopHours[] = data.summary.cheapestHours;
+  const mostExpensiveHours: TopHours[] = data.summary.mostExpensiveHours;
 
   return (
     <div className="single-day-container">
@@ -83,13 +83,14 @@ function DetailedView() {
         <div className="metrics-row">
           <div className="metrics-block">
             <h3>Peak production hour</h3>
-            <p>{formatTime(peakProd.starttime)}</p>
-            <p>{formatNumber(peakProd.productionamount)}</p>
+            <p>{peakProd ? formatTime(peakProd.starttime) : "-"}</p>
+            <p>{formatNumber(peakProd?.productionamount)}</p>
           </div>
+
           <div className="metrics-block">
             <h3>Peak consumption hour</h3>
-            <p>{formatTime(peakCons.starttime)}</p>
-            <p>{formatKwhToMwhString(peakCons.consumptionamount)}</p>
+            <p>{peakCons ? formatTime(peakCons.starttime) : "-"}</p>
+            <p>{formatKwhToMwhString(peakCons?.consumptionamount)}</p>
           </div>
         </div>
 
@@ -98,7 +99,7 @@ function DetailedView() {
             <h3>Cheapest hours</h3>
             <div>
               {cheapestHours.map((hour) => (
-                <span key={hour.time} className="price-tag success">
+                <span key={hour.time} className="price-tag green">
                   {formatTime(hour.time)}:{" "}
                   <b>{formatNumber(hour.price, 2)} c</b>
                 </span>
@@ -107,6 +108,14 @@ function DetailedView() {
           </div>
           <div className="metrics-block">
             <h3>Most expensive hours</h3>
+            <div>
+              {mostExpensiveHours.map((hour) => (
+                <span key={hour.time} className="price-tag red">
+                  {formatTime(hour.time)}:{" "}
+                  <b>{formatNumber(hour.price, 2)} c</b>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
