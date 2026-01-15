@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import type {
-  SingleDayResponse,
-  CheapestHours,
-  MaxDiffHour,
-  HourlyData,
-} from "../types";
+import type { SingleDayResponse, CheapestHours } from "../types";
 
 import "./DetailedView.css";
 
@@ -23,7 +18,7 @@ function DetailedView() {
 
   const [data, setData] = useState<SingleDayResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -45,6 +40,7 @@ function DetailedView() {
     fetchData();
   }, [date]);
 
+  if (loading) return <h3>Loading data...</h3>;
   if (!data) return null;
 
   const cheapestHours: CheapestHours[] = data.summary.cheapestHours;

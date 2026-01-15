@@ -1,4 +1,3 @@
-import { count } from "node:console";
 import pool from "../db.js";
 import { ElectricityData } from "../types.js";
 
