@@ -5,7 +5,7 @@ import type { DailyListItem, DailyListResponse } from "../types";
 import {
   formatKwhToMwhString,
   formatNumber,
-  formatTime,
+  formatDate,
 } from "../utils/formatters";
 import { electricityApi } from "../api/electricityApi";
 import Pagination from "./Pagination";
@@ -130,7 +130,7 @@ function MainTable() {
                       className={dateWarning ? "warning-cell" : ""}
                       title={dateWarning}
                     >
-                      {row.date} {dateWarning && "⚠️"}
+                      {formatDate(row.date)} {dateWarning && "⚠️"}
                     </td>
                     <td
                       className={priceWarning ? "warning-cell" : ""}

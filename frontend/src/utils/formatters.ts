@@ -28,4 +28,16 @@ export function formatTime(isoString: string): string {
   });
 }
 
-export function formatDate(date: string): string {}
+export function formatDate(dateString: string | undefined): string {
+  if (!dateString || dateString === undefined) return "-";
+
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) return dateString;
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}

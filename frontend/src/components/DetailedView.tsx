@@ -15,6 +15,7 @@ import {
   formatKwhToMwhString,
   formatTime,
   formatNumber,
+  formatDate,
 } from "../utils/formatters";
 
 function DetailedView() {
@@ -46,8 +47,6 @@ function DetailedView() {
 
   if (!data) return null;
 
-  // calc values
-  const formattedDate = date; // Implement
   const cheapestHours: CheapestHours[] = data.summary.cheapestHours;
   // const mostExpensiveHours = NEED TO IMPLEMENT IN BACKEND
 
@@ -70,7 +69,7 @@ function DetailedView() {
   return (
     <div className="single-day-container">
       <div>
-        <h2>Date: {formattedDate}</h2>
+        <h2>Date: {formatDate(date)}</h2>
       </div>
       <button
         onClick={() => {
