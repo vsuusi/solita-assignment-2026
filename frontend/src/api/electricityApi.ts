@@ -8,11 +8,20 @@ export const electricityApi = {
     page: number = 1,
     limit: number = 10,
     sortBy: string = "date",
-    sortOrder: "ASC" | "DESC" = "ASC"
+    sortOrder: "ASC" | "DESC" = "ASC",
+    startDate?: string,
+    endDate?: string
   ) => {
-    const resp = await axios.get(
-      `${baseURL}?page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`
-    );
+    const resp = await axios.get(baseURL, {
+      params: {
+        page,
+        limit,
+        sortBy,
+        sortOrder,
+        startDate,
+        endDate,
+      },
+    });
     return resp.data;
   },
 

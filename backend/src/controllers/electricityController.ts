@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 import { electricityService } from "../services/electricityService.js";
 
-// traffic cop: doesnt know about sql or business logic
-// handle errors here
-
 function validateIsoDate(dateString: string): boolean {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) {
@@ -30,11 +27,16 @@ export const getDailyElectricityList = async (req: Request, resp: Response) => {
     const sortOrder =
       (req.query.sortOrder as string) === "DESC" ? "DESC" : "ASC";
 
+    const startDate = req.query.startDate as string | undefined;
+    const endDate = req.query.endDate as string | undefined;
+
     const result = await electricityService.getDaily(
       page,
       limit,
       sortBy,
-      sortOrder
+      sortOrder,
+      startDate,
+      endDate
     );
     resp.json(result);
   } catch (e) {
