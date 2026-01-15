@@ -22,3 +22,35 @@ export interface DailyListResponse {
     totalPages: number;
   };
 }
+
+export interface CheapestHours {
+  time: string;
+  price: number;
+}
+
+export interface MaxDiffHour {
+  time: string;
+  valueKwh: number;
+}
+
+export interface HourlyData {
+  id: number;
+  date: string;
+  starttime: string;
+  consumptionamount: number;
+  productionamount: number;
+  hourlyprice: number;
+}
+
+export interface SingleDayResponse {
+  date: string;
+  hourlyData: HourlyData[];
+  summary: {
+    avgPrice: number;
+    cheapestHours: CheapestHours[];
+    maxDiffHour: MaxDiffHour;
+    totalConsumptionKwh: number;
+    totalProductionMwh: number;
+  };
+  quality: DataQuality;
+}

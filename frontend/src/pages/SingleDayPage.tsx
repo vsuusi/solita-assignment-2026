@@ -1,6 +1,8 @@
+import DetailedView from "../components/DetailedView";
+
 function SingleDayPage() {
   // validate date format YYYY-MM-DD
-  return <div>Single Day Page</div>;
+  return <DetailedView />;
 }
 
 export default SingleDayPage;

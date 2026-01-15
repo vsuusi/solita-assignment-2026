@@ -1,0 +1,16 @@
+.single-day-container {
+  background-color: rgb(219, 248, 248);
+}
+
+.metrics-row {
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(249, 255, 213);
+  margin-block: 1rem;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.metrics-block {
+  background-color: rgb(255, 218, 175);
+}
