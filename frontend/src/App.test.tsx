@@ -5,6 +5,6 @@ import App from "./App";
 describe("App component", () => {
   it("renders greeting", () => {
     render(<App />);
-    expect(screen.getByText(/Dev Academy Spring 2026/i)).toBeTruthy();
+    expect(screen.getByText(/Daily electricity statistics/i)).toBeTruthy();
   });
 });

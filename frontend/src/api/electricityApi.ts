@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:3000/api/electricity";
+const baseURL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000/api/electricity";
 
 export const electricityApi = {
   getDailyElectricityList: async (

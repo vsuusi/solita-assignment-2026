@@ -46,21 +46,27 @@ function DetailedView() {
   const cheapestHours: CheapestHours[] = data.summary.cheapestHours;
   // const mostExpensiveHours = NEED TO IMPLEMENT IN BACKEND
 
-  const peakCons = data.hourlyData.reduce(
-    (max, current) =>
-      (current.consumptionamount ?? 0) > (max.consumptionamount ?? 0)
-        ? current
-        : max,
-    data.hourlyData[0]
-  );
+  const peakCons =
+    data.hourlyData.length > 0
+      ? data.hourlyData.reduce(
+          (max, current) =>
+            (current.consumptionamount ?? 0) > (max.consumptionamount ?? 0)
+              ? current
+              : max,
+          data.hourlyData[0]
+        )
+      : null;
 
-  const peakProd = data.hourlyData.reduce(
-    (max, current) =>
-      (current.productionamount ?? 0) > (max.productionamount ?? 0)
-        ? current
-        : max,
-    data.hourlyData[0]
-  );
+  const peakProd =
+    data.hourlyData.length > 0
+      ? data.hourlyData.reduce(
+          (max, current) =>
+            (current.productionamount ?? 0) > (max.productionamount ?? 0)
+              ? current
+              : max,
+          data.hourlyData[0]
+        )
+      : null;
 
   return (
     <div className="single-day-container">
@@ -137,9 +143,9 @@ function DetailedView() {
           <thead>
             <tr>
               <th>Hour</th>
-              <th>hourlyprice</th>
-              <th>production</th>
-              <th>consumption</th>
+              <th>Price</th>
+              <th>Production (MWh)</th>
+              <th>Consumption (MWh)</th>
             </tr>
           </thead>
           <tbody>

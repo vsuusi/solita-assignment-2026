@@ -62,7 +62,7 @@ A full-stack application to visualize, analyze, and inspect hourly electricity d
 $ docker compose up --build --renew-anon-volumes -d
 ```
 
-3. Application is now accessible at http://localhost:8080/
+2. Application is now accessible at http://localhost:8080/
 
 ## Development mode
 

@@ -33,17 +33,18 @@ const Layout = () => {
   );
 };
 
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      { path: "/", element: <DashboardPage /> },
+      { path: "/day/:date", element: <SingleDayPage /> },
+      { path: "*", element: <Navigate to="/" /> },
+    ],
+  },
+]);
+
 function App() {
-  const router = createBrowserRouter([
-    {
-      element: <Layout />,
-      children: [
-        { path: "/", element: <DashboardPage /> },
-        { path: "/day/:date", element: <SingleDayPage /> },
-        { path: "*", element: <Navigate to="/" /> },
-      ],
-    },
-  ]);
   return (
     <>
       <RouterProvider router={router} />
