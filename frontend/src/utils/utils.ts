@@ -1,3 +1,5 @@
+import type { HourlyData } from "../types";
+
 export function formatNumber(
   value: number | null | undefined,
   digits: number = 1
@@ -39,5 +41,16 @@ export function formatDate(dateString: string | undefined): string {
     year: "numeric",
     month: "short",
     day: "numeric",
+  });
+}
+
+export function findPeakHour(list: HourlyData[], key: keyof HourlyData) {
+  if (!list || list.length === 0) return null;
+
+  return list.reduce((max, current) => {
+    const currentVal = (current[key] as number) ?? 0;
+    const maxVal = (max[key] as number) ?? 0;
+
+    return currentVal > maxVal ? current : max;
   });
 }

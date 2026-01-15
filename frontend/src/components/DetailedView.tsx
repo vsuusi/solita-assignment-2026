@@ -11,7 +11,8 @@ import {
   formatTime,
   formatNumber,
   formatDate,
-} from "../utils/formatters";
+  findPeakHour,
+} from "../utils/utils";
 
 function DetailedView() {
   const { date } = useParams<{ date: string }>();
@@ -43,30 +44,11 @@ function DetailedView() {
   if (loading) return <h3>Loading data...</h3>;
   if (!data) return null;
 
+  const peakCons = findPeakHour(data.hourlyData, "consumptionamount");
+  const peakProd = findPeakHour(data.hourlyData, "productionamount");
+
   const cheapestHours: CheapestHours[] = data.summary.cheapestHours;
   // const mostExpensiveHours = NEED TO IMPLEMENT IN BACKEND
-
-  const peakCons =
-    data.hourlyData.length > 0
-      ? data.hourlyData.reduce(
-          (max, current) =>
-            (current.consumptionamount ?? 0) > (max.consumptionamount ?? 0)
-              ? current
-              : max,
-          data.hourlyData[0]
-        )
-      : null;
-
-  const peakProd =
-    data.hourlyData.length > 0
-      ? data.hourlyData.reduce(
-          (max, current) =>
-            (current.productionamount ?? 0) > (max.productionamount ?? 0)
-              ? current
-              : max,
-          data.hourlyData[0]
-        )
-      : null;
 
   return (
     <div className="single-day-container">
