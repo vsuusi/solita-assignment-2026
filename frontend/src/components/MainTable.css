@@ -1,0 +1,66 @@
+.main-table {
+  width: 100%;
+  border-collapse: collapse; /* Removes double borders */
+  margin-top: 20px;
+  transition: opacity 0.3s ease; /* Smooth transition for loading state */
+}
+
+.main-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.main-table-header {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  transition: background-color 0.2s;
+}
+
+.main-table-header.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.main-table-header.clickable:hover {
+  background-color: #e2e2e2;
+}
+
+.main-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.main-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.warning-cell {
+  background-color: #fff7ed; /* Light Orange/Yellow */
+  color: #c2410c; /* Dark Orange Text */
+  cursor: help; /* Shows '?' cursor */
+  font-weight: 500;
+  position: relative; /* For potential future custom tooltips */
+}
+
+.warning-cell:hover {
+  background-color: #ffedd5; /* Slightly darker on hover */
+}
+
+.view-btn {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.view-btn:hover {
+  text-decoration: underline;
+}
+
+.sort-arrow {
+  font-size: 0.8em;
+  margin-left: 5px;
+  color: #999;
+}

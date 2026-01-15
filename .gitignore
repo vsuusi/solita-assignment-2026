@@ -13,3 +13,5 @@
 .vscode/
 *.log
 .DS_Store
+
+diff.txt

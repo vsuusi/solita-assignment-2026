@@ -18,7 +18,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5432:5432
-    # probs need volumes
 
   # adminer service for DB management
   adminer:
