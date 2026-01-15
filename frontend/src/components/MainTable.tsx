@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import type { DailyListItem, DailyListResponse } from "../types";
+import {
+  formatKwhToMwhString,
+  formatNumber,
+  formatTime,
+} from "../utils/formatters";
 import { electricityApi } from "../api/electricityApi";
 import Pagination from "./Pagination";
 
@@ -13,7 +18,7 @@ function MainTable() {
   const [error, setError] = useState<string | null>(null);
 
   const [sortBy, setSortBy] = useState<string>("date");
-  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -54,8 +59,12 @@ function MainTable() {
     setPage(1);
   };
 
+  const getWarning = (issues: string[], keyword: string) => {
+    return issues.find((issue) => issue.toLowerCase().includes(keyword));
+  };
+
   const renderSortArrow = (column: string) => {
-    if (sortBy !== column) return <span className="sort-arrow">↕</span>; // Passive arrow
+    if (sortBy !== column) return <span className="sort-arrow">↕</span>;
     return sortOrder === "ASC" ? " ▲" : " ▼";
   };
 
@@ -63,8 +72,7 @@ function MainTable() {
 
   return (
     <div className="wrapper">
-      <h1>Main table</h1>
-      <p>Click on a row to view details</p>
+      <h1>Daily electricity statistics</h1>
       {loading && data.length === 0 ? (
         <h3>Loading initial data...</h3>
       ) : (
@@ -72,63 +80,85 @@ function MainTable() {
           <table className="main-table" style={{ opacity: loading ? 0.5 : 1 }}>
             <thead>
               <tr>
-                <th onClick={() => handleSortChange("date")}>
-                  Date {renderSortArrow("date")}
+                <th
+                  onClick={() => handleSortChange("date")}
+                  className="main-table-header clickable"
+                >
+                  Date{renderSortArrow("date")}
                 </th>
-                <th>Status</th>
-                <th onClick={() => handleSortChange("avgPrice")}>
-                  Avg Price {renderSortArrow("avgPrice")}
+                <th
+                  onClick={() => handleSortChange("avgPrice")}
+                  className="main-table-header clickable"
+                >
+                  Avg Price{renderSortArrow("avgPrice")}
                 </th>
-                <th onClick={() => handleSortChange("totalConsumptionKwh")}>
-                  Consumption (MWh) {renderSortArrow("totalConsumptionKwh")}
+                <th
+                  onClick={() => handleSortChange("totalProductionMwh")}
+                  className="main-table-header clickable"
+                >
+                  Production (MWh){renderSortArrow("totalProductionMwh")}
                 </th>
-                <th onClick={() => handleSortChange("totalProductionMwh")}>
-                  Production (MWh) {renderSortArrow("totalProductionMwh")}
+                <th
+                  onClick={() => handleSortChange("totalConsumptionKwh")}
+                  className="main-table-header clickable"
+                >
+                  Consumption (MWh){renderSortArrow("totalConsumptionKwh")}
                 </th>
-                <th>Neg. Streak (h)</th> {/* need to add sorting */}
-                <th>Action</th>
+                <th className="main-table-header">Neg. Streak (h)</th>
+                {/* need to add sorting */}
+                <th className="main-table-header">Action</th>
               </tr>
             </thead>
 
             <tbody>
-              {data.map((row) => (
-                <tr key={row.date}>
-                  <td>{row.date}</td>
-                  <td>
-                    {row.quality.isValid ? (
-                      <span className="badge success">OK</span>
-                    ) : (
-                      <span
-                        className="badge warning"
-                        title={row.quality.issues.join("\n")} // Hover to see issues
-                      >
-                        ⚠️ Issues
-                      </span>
-                    )}
-                  </td>
-                  <td>{row.avgPrice?.toFixed(2) ?? "-"}</td>
-                  <td>
-                    {row.totalConsumptionKwh
-                      ? (row.totalConsumptionKwh / 1000).toLocaleString()
-                      : "-"}
-                  </td>
-                  <td>{row.totalProductionMwh?.toLocaleString() ?? "-"}</td>
-                  <td style={{ textAlign: "center" }}>
-                    {row.longestNegativeStreak > 0 ? (
-                      <span style={{ color: "green", fontWeight: "bold" }}>
-                        {row.longestNegativeStreak} h
-                      </span>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td>
-                    <Link to={`/day/${row.date}`} className="view-btn">
-                      View Details
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+              {data.map((row) => {
+                const avgPrice = row.avgPrice?.toFixed(2) ?? "-";
+                const longestNegativeStreak =
+                  row.longestNegativeStreak > 0
+                    ? row.longestNegativeStreak
+                    : "-";
+                const detailsLink = "/day/" + row.date;
+
+                const issues = row.quality.issues;
+                const dateWarning = getWarning(issues, "missing");
+                const priceWarning = getWarning(issues, "price");
+                const consWarning = getWarning(issues, "consumption");
+                const prodWarning = getWarning(issues, "production");
+                return (
+                  <tr key={row.date}>
+                    <td
+                      className={dateWarning ? "warning-cell" : ""}
+                      title={dateWarning}
+                    >
+                      {row.date} {dateWarning && "⚠️"}
+                    </td>
+                    <td
+                      className={priceWarning ? "warning-cell" : ""}
+                      title={priceWarning}
+                    >
+                      {avgPrice}
+                    </td>
+                    <td
+                      className={prodWarning ? "warning-cell" : ""}
+                      title={prodWarning}
+                    >
+                      {formatNumber(row.totalProductionMwh, 1)}
+                    </td>
+                    <td
+                      className={consWarning ? "warning-cell" : ""}
+                      title={consWarning}
+                    >
+                      {formatKwhToMwhString(row.totalConsumptionKwh, 1)}
+                    </td>
+                    <td>{longestNegativeStreak}</td>
+                    <td>
+                      <Link to={detailsLink} className="view-btn">
+                        View Details
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           <Pagination

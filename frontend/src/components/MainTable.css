@@ -5,19 +5,28 @@
   transition: opacity 0.3s ease; /* Smooth transition for loading state */
 }
 
-.main-table th,
 .main-table td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
 }
 
-.main-table th {
+.main-table-header {
   background-color: #f4f4f4;
   font-weight: bold;
-  cursor: pointer; /* Shows hand icon */
-  user-select: none; /* Prevents text selection when double clicking */
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
   transition: background-color 0.2s;
+}
+
+.main-table-header.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.main-table-header.clickable:hover {
+  background-color: #e2e2e2;
 }
 
 .main-table tr:nth-child(even) {
@@ -28,25 +37,18 @@
   background-color: #f1f1f1;
 }
 
-.badge {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.85em;
-  font-weight: bold;
+.warning-cell {
+  background-color: #fff7ed; /* Light Orange/Yellow */
+  color: #c2410c; /* Dark Orange Text */
+  cursor: help; /* Shows '?' cursor */
+  font-weight: 500;
+  position: relative; /* For potential future custom tooltips */
 }
 
-.badge.success {
-  background-color: #e6fffa;
-  color: #047857;
+.warning-cell:hover {
+  background-color: #ffedd5; /* Slightly darker on hover */
 }
 
-.badge.warning {
-  background-color: #fffbeb;
-  color: #b45309;
-  cursor: help; /* Shows '?' cursor on hover */
-}
-
-/* View Button */
 .view-btn {
   text-decoration: none;
   color: #2563eb;
@@ -55,13 +57,6 @@
 
 .view-btn:hover {
   text-decoration: underline;
-}
-
-/* Table Alignment */
-.main-table th,
-.main-table td {
-  text-align: left;
-  padding: 12px;
 }
 
 .sort-arrow {
