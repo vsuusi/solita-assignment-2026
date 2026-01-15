@@ -109,8 +109,6 @@ function MainTable() {
     return sortOrder === "ASC" ? " ▲" : " ▼";
   };
 
-  if (error) return <p>Error loading data: {error}</p>;
-
   return (
     <div className="wrapper">
       <h1>Daily electricity statistics</h1>
@@ -143,7 +141,7 @@ function MainTable() {
         <div className="status-message">Loading data...</div>
       )}
 
-      {error && <div className="status-message error">{error}</div>}
+      {error && <p>Error loading data: {error}</p>}
 
       {!loading && !error && data.length === 0 && (
         <EmptyState

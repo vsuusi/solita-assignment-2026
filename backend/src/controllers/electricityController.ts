@@ -30,6 +30,24 @@ export const getDailyElectricityList = async (req: Request, resp: Response) => {
     const startDate = req.query.startDate as string | undefined;
     const endDate = req.query.endDate as string | undefined;
 
+    if (startDate && !validateIsoDate(startDate)) {
+      return resp
+        .status(400)
+        .json({ error: "Invalid startDate. Expected YYYY-MM-DD." });
+    }
+    if (endDate && !validateIsoDate(endDate)) {
+      return resp
+        .status(400)
+        .json({ error: "Invalid endDate. Expected YYYY-MM-DD." });
+    }
+    if (startDate && endDate && startDate > endDate) {
+      return resp
+        .status(400)
+        .json({
+          error: "Invalid date range. startDate must be before endDate.",
+        });
+    }
+
     const result = await electricityService.getDaily(
       page,
       limit,
