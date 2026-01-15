@@ -5,7 +5,9 @@ import type { DailyListItem, DailyListResponse } from "../types";
 import { formatKwhToMwhString, formatNumber, formatDate } from "../utils/utils";
 import { electricityApi } from "../api/electricityApi";
 import Pagination from "./Pagination";
-
+import DateRangePicker from "./DateRangePicker";
+import EmptyState from "./EmptyState";
+import "react-datepicker/dist/react-datepicker.css"; // load css in parent
 import "./MainTable.css";
 
 function MainTable() {
@@ -16,34 +18,41 @@ function MainTable() {
   const [sortBy, setSortBy] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 
+  // states for pagination
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(10);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const resp: DailyListResponse =
-          await electricityApi.getDailyElectricityList(
-            page,
-            10,
-            sortBy,
-            sortOrder
-          );
-        console.log("Full response:", resp);
-        if (resp && resp.data) {
-          setData(resp.data);
-          setTotalPages(resp.meta.totalPages);
-        }
-      } catch (e) {
-        setError("Failed to fetch data");
-        console.error("error: ", e);
-      } finally {
-        setLoading(false);
-      }
+  // states for date picker
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [appliedStart, setAppliedStart] = useState<string | undefined>(
+    undefined
+  );
+  const [appliedEnd, setAppliedEnd] = useState<string | undefined>(undefined);
+
+  // handlers
+  const handleApplyFilters = () => {
+    // Date Picker component uses Date, api uses YYYY-MM-DD string
+    const formatApiDate = (date: Date | null) => {
+      if (!date) return undefined;
+      const offset = date.getTimezoneOffset();
+      const dateLocal = new Date(date.getTime() - offset * 60 * 1000);
+      return dateLocal.toISOString().split("T")[0];
     };
-    fetchData();
-  }, [sortBy, sortOrder, page]);
+
+    setAppliedStart(formatApiDate(startDate));
+    setAppliedEnd(formatApiDate(endDate));
+    setPage(1);
+  };
+
+  const hanldeClearFilters = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setAppliedStart(undefined);
+    setAppliedEnd(undefined);
+    setPage(1);
+  };
 
   const handleSortChange = (column: string) => {
     if (sortBy === column) {
@@ -55,6 +64,42 @@ function MainTable() {
     setPage(1);
   };
 
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const resp: DailyListResponse =
+          await electricityApi.getDailyElectricityList(
+            page,
+            limit,
+            sortBy,
+            sortOrder,
+            appliedStart,
+            appliedEnd
+          );
+
+        console.log("Full response:", resp);
+
+        if (resp && resp.data) {
+          setData(resp.data);
+          setTotalPages(Math.max(resp.meta.totalPages, 1)); // set minimum pages to 1
+        }
+      } catch (e) {
+        setError("Failed to fetch data");
+        console.error("error: ", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [sortBy, sortOrder, page, appliedStart, appliedEnd, limit]);
+
+  // helpers
   const getWarning = (issues: string[], keyword: string) => {
     return issues.find((issue) => issue.toLowerCase().includes(keyword));
   };
@@ -64,14 +109,50 @@ function MainTable() {
     return sortOrder === "ASC" ? " ▲" : " ▼";
   };
 
-  if (error) return <p>Error loading data: {error}</p>;
-
   return (
     <div className="wrapper">
       <h1>Daily electricity statistics</h1>
-      {loading && data.length === 0 ? (
-        <h3>Loading initial data...</h3>
-      ) : (
+
+      <div className="filter-bar">
+        <div>
+          <label className="filter-label">Date Range:</label>
+          <DateRangePicker
+            startDate={startDate}
+            endDate={endDate}
+            onStartDateChange={setStartDate}
+            onEndDateChange={setEndDate}
+          />
+        </div>
+
+        <div className="filter-actions">
+          <button onClick={handleApplyFilters} className="btn btn-primary">
+            Apply
+          </button>
+
+          {(startDate || endDate) && (
+            <button onClick={hanldeClearFilters} className="btn btn-secondary">
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      {loading && data.length === 0 && (
+        <div className="status-message">Loading data...</div>
+      )}
+
+      {error && <p>Error loading data: {error}</p>}
+
+      {!loading && !error && data.length === 0 && (
+        <EmptyState
+          title="No data found"
+          description="Try adjusting your date range or clearing the filters."
+          showClearButton={Boolean(startDate || endDate)}
+          onClear={hanldeClearFilters}
+        />
+      )}
+
+      {data.length > 0 && (
         <>
           <table className="main-table" style={{ opacity: loading ? 0.5 : 1 }}>
             <thead>
@@ -161,6 +242,8 @@ function MainTable() {
             currentPage={page}
             totalPages={totalPages}
             onPageChange={(newPage) => setPage(newPage)}
+            itemsPerPage={limit}
+            onItemsPerPageChange={handleLimitChange}
           />
         </>
       )}

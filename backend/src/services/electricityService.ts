@@ -60,13 +60,17 @@ export const electricityService = {
     page: number,
     limit: number,
     sortBy: string,
-    sortOrder: "ASC" | "DESC"
+    sortOrder: "ASC" | "DESC",
+    startDate?: string,
+    endDate?: string
   ): Promise<{ data: DailyListItem[]; meta: DailyListMeta }> {
     const resp = await electricityRepository.getDailySummaries(
       page,
       limit,
       sortBy,
-      sortOrder
+      sortOrder,
+      startDate,
+      endDate
     );
     const rows = resp.rows;
 
@@ -74,7 +78,7 @@ export const electricityService = {
     const hourlyData = await electricityRepository.getHourlyDataForDates(dates);
 
     const enrichedRows: DailyListItem[] = rows.map((daySum) => {
-      const daysHours = hourlyData.filter((h) => h.date === daySum.date);
+      const daysHours = hourlyData.filter((hour) => hour.date === daySum.date);
       const quality = analyzeDataQuality(daysHours);
 
       return {
@@ -145,7 +149,6 @@ export const electricityService = {
         price: row.hourlyprice as number,
       }));
 
-    // can modify the return object however needed
     return {
       date: date,
       summary: {
