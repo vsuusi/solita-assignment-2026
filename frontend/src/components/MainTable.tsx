@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import type { DailyListItem, DailyListResponse } from "../types";
-import {
-  formatKwhToMwhString,
-  formatNumber,
-  formatDate,
-} from "../utils/formatters";
+import { formatKwhToMwhString, formatNumber, formatDate } from "../utils/utils";
 import { electricityApi } from "../api/electricityApi";
 import Pagination from "./Pagination";
 
