@@ -4,7 +4,7 @@ export function formatNumber(
   value: number | null | undefined,
   digits: number = 1
 ): string {
-  if (value === null || value === undefined || isNaN(value)) {
+  if (value === null || value === undefined) {
     return "-";
   }
 
@@ -23,6 +23,7 @@ export function formatKwhToMwhString(
 }
 
 export function formatTime(isoString: string): string {
+  if (!isoString || isoString === undefined) return "-";
   return new Date(isoString).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",

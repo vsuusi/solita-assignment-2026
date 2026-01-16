@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import type { SingleDayResponse, TopHours } from "../types";
-
-import "./DetailedView.css";
-
 import { electricityApi } from "../api/electricityApi";
 import {
   formatKwhToMwhString,
@@ -13,6 +10,10 @@ import {
   formatDate,
   findPeakHour,
 } from "../utils/utils";
+import PriceChart from "./PriceChart";
+import ElectricityChart from "./ElectricityChart";
+
+import "./DetailedView.css";
 
 function DetailedView() {
   const { date } = useParams<{ date: string }>();
@@ -120,11 +121,14 @@ function DetailedView() {
         </div>
 
         <div className="metrics-row">
-          <h3>Daily energy chart</h3>
+          <h3>Electricity chart</h3>
+          <ElectricityChart data={data.hourlyData} width={700} height={250} />
         </div>
 
         <div className="metrics-row">
-          <h3>Hourly price movement</h3>
+          <div className="metrics-block-chart"></div>
+          <h3>Price movement</h3>
+          <PriceChart data={data.hourlyData} width={700} height={250} />
         </div>
       </div>
 
