@@ -1,14 +1,26 @@
+.main-header {
+  /* style header */
+}
+
 .main-table {
   width: 100%;
-  border-collapse: collapse; /* Removes double borders */
+  border-collapse: separate; /* Removes double borders */
+  border-spacing: 0;
   margin-top: 20px;
   transition: opacity 0.3s ease; /* Smooth transition for loading state */
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .main-table td {
   border: 1px solid #ddd;
   padding: 12px;
-  text-align: left;
+  text-align: center;
+  margin-left: 15px;
+  height: 30px;
+  border: none;
 }
 
 .main-table-header {
@@ -16,8 +28,21 @@
   font-weight: bold;
   border: 1px solid #ddd;
   padding: 12px;
-  text-align: left;
+  text-align: center;
   transition: background-color 0.2s;
+}
+
+/* date column header */
+.main-table td:nth-child(1) {
+  width: 140px;
+}
+
+/* rest columns */
+.main-table td:nth-child(2),
+.main-table td:nth-child(3),
+.main-table td:nth-child(4) {
+  width: 120px;
+  text-align: right;
 }
 
 .main-table-header.clickable {
@@ -27,6 +52,10 @@
 
 .main-table-header.clickable:hover {
   background-color: #e2e2e2;
+}
+
+.main-table-header.neg-streak {
+  cursor: help;
 }
 
 .main-table tr:nth-child(even) {

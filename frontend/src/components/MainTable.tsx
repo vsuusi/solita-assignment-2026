@@ -5,6 +5,7 @@ import type { DailyListItem, DailyListResponse } from "../types";
 import { formatKwhToMwhString, formatNumber, formatDate } from "../utils/utils";
 import { electricityApi } from "../api/electricityApi";
 import Pagination from "./Pagination";
+import PageLimit from "./PageLimit";
 import DateRangePicker from "./DateRangePicker";
 import EmptyState from "./EmptyState";
 import "react-datepicker/dist/react-datepicker.css"; // load css in parent
@@ -105,13 +106,15 @@ function MainTable() {
   };
 
   const renderSortArrow = (column: string) => {
-    if (sortBy !== column) return <span className="sort-arrow">↕</span>;
+    if (sortBy !== column) return <span className="sort-arrow" />;
     return sortOrder === "ASC" ? " ▲" : " ▼";
   };
 
   return (
-    <div className="wrapper">
-      <h1>Daily electricity statistics</h1>
+    <>
+      <div className="main-header">
+        <h1>Daily electricity statistics</h1>
+      </div>
 
       <div className="filter-bar">
         <div>
@@ -136,6 +139,10 @@ function MainTable() {
           )}
         </div>
       </div>
+      <PageLimit
+        itemsPerPage={limit}
+        onItemsPerPageChange={handleLimitChange}
+      />
 
       {loading && data.length === 0 && (
         <div className="status-message">Loading data...</div>
@@ -167,7 +174,7 @@ function MainTable() {
                   onClick={() => handleSortChange("avgPrice")}
                   className="main-table-header clickable"
                 >
-                  Avg Price{renderSortArrow("avgPrice")}
+                  Avg Price (c){renderSortArrow("avgPrice")}
                 </th>
                 <th
                   onClick={() => handleSortChange("totalProductionMwh")}
@@ -181,8 +188,12 @@ function MainTable() {
                 >
                   Consumption (MWh){renderSortArrow("totalConsumptionKwh")}
                 </th>
-                <th className="main-table-header">Neg. Streak (h)</th>
-                {/* need to add sorting */}
+                <th
+                  className="main-table-header neg-streak"
+                  title="Longest consecutive hours when price was negative"
+                >
+                  Neg. Streak (h)
+                </th>
                 <th className="main-table-header">Action</th>
               </tr>
             </thead>
@@ -242,12 +253,10 @@ function MainTable() {
             currentPage={page}
             totalPages={totalPages}
             onPageChange={(newPage) => setPage(newPage)}
-            itemsPerPage={limit}
-            onItemsPerPageChange={handleLimitChange}
           />
         </>
       )}
-    </div>
+    </>
   );
 }
 
