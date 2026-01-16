@@ -14,3 +14,7 @@
 .metrics-block {
   background-color: rgb(255, 218, 175);
 }
+
+.metrics-block-chart {
+  background-color: burlywood;
+}

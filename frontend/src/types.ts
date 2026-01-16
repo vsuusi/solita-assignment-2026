@@ -1,4 +1,4 @@
-export interface DataQuality {
+interface DataQuality {
   isValid: boolean;
   missingRows: number;
   issues: string[];
@@ -28,7 +28,7 @@ export interface TopHours {
   price: number;
 }
 
-export interface MaxDiffHour {
+interface MaxDiffHour {
   time: string;
   valueKwh: number;
 }
