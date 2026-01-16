@@ -16,6 +16,7 @@ function MainTable() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // states for sorting table
   const [sortBy, setSortBy] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 
@@ -24,37 +25,15 @@ function MainTable() {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
 
-  // states for date picker
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [appliedStart, setAppliedStart] = useState<string | undefined>(
+  // states for date selection
+  const [appliedStartDate, setAppliedStartDate] = useState<string | undefined>(
     undefined
   );
-  const [appliedEnd, setAppliedEnd] = useState<string | undefined>(undefined);
+  const [appliedEndDate, setAppliedEndDate] = useState<string | undefined>(
+    undefined
+  );
 
   // handlers
-  const handleApplyFilters = () => {
-    // Date Picker component uses Date, api uses YYYY-MM-DD string
-    const formatApiDate = (date: Date | null) => {
-      if (!date) return undefined;
-      const offset = date.getTimezoneOffset();
-      const dateLocal = new Date(date.getTime() - offset * 60 * 1000);
-      return dateLocal.toISOString().split("T")[0];
-    };
-
-    setAppliedStart(formatApiDate(startDate));
-    setAppliedEnd(formatApiDate(endDate));
-    setPage(1);
-  };
-
-  const hanldeClearFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setAppliedStart(undefined);
-    setAppliedEnd(undefined);
-    setPage(1);
-  };
-
   const handleSortChange = (column: string) => {
     if (sortBy === column) {
       setSortOrder((prev) => (prev === "ASC" ? "DESC" : "ASC"));
@@ -70,6 +49,32 @@ function MainTable() {
     setPage(1);
   };
 
+  const hanldeDateRangeChange = (
+    startDate?: string,
+    endDate?: string,
+    clear?: boolean
+  ) => {
+    if (clear) {
+      setAppliedStartDate(undefined);
+      setAppliedEndDate(undefined);
+    } else {
+      setAppliedStartDate(startDate);
+      setAppliedEndDate(endDate);
+    }
+    setPage(1);
+  };
+
+  // helpers
+  const getWarning = (issues: string[], keyword: string) => {
+    return issues.find((issue) => issue.toLowerCase().includes(keyword));
+  };
+
+  const renderSortArrow = (column: string) => {
+    if (sortBy !== column) return <span className="sort-arrow" />;
+    return sortOrder === "ASC" ? " ▲" : " ▼";
+  };
+
+  // data fetching
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,8 +85,8 @@ function MainTable() {
             limit,
             sortBy,
             sortOrder,
-            appliedStart,
-            appliedEnd
+            appliedStartDate,
+            appliedEndDate
           );
 
         console.log("Full response:", resp);
@@ -98,17 +103,7 @@ function MainTable() {
       }
     };
     fetchData();
-  }, [sortBy, sortOrder, page, appliedStart, appliedEnd, limit]);
-
-  // helpers
-  const getWarning = (issues: string[], keyword: string) => {
-    return issues.find((issue) => issue.toLowerCase().includes(keyword));
-  };
-
-  const renderSortArrow = (column: string) => {
-    if (sortBy !== column) return <span className="sort-arrow" />;
-    return sortOrder === "ASC" ? " ▲" : " ▼";
-  };
+  }, [sortBy, sortOrder, page, appliedStartDate, appliedEndDate, limit]);
 
   return (
     <>
@@ -116,29 +111,7 @@ function MainTable() {
         <h1>Daily electricity statistics</h1>
       </div>
 
-      <div className="filter-bar">
-        <div>
-          <label className="filter-label">Date Range:</label>
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            onStartDateChange={setStartDate}
-            onEndDateChange={setEndDate}
-          />
-        </div>
-
-        <div className="filter-actions">
-          <button onClick={handleApplyFilters} className="btn btn-primary">
-            Apply
-          </button>
-
-          {(startDate || endDate) && (
-            <button onClick={hanldeClearFilters} className="btn btn-secondary">
-              Clear
-            </button>
-          )}
-        </div>
-      </div>
+      <DateRangePicker onDateRangeChange={hanldeDateRangeChange} />
       <PageLimit
         itemsPerPage={limit}
         onItemsPerPageChange={handleLimitChange}
@@ -154,8 +127,8 @@ function MainTable() {
         <EmptyState
           title="No data found"
           description="Try adjusting your date range or clearing the filters."
-          showClearButton={Boolean(startDate || endDate)}
-          onClear={hanldeClearFilters}
+          showClearButton={Boolean(appliedStartDate || appliedEndDate)}
+          onClear={() => hanldeDateRangeChange(undefined, undefined, true)}
         />
       )}
 

@@ -1,24 +1,44 @@
+import { useState } from "react";
+
 import DatePicker from "react-datepicker";
 import "./DateRangePicker.css";
 
 interface DateRangePickerProps {
-  startDate: Date | null;
-  endDate: Date | null;
-  onStartDateChange: (date: Date | null) => void;
-  onEndDateChange: (date: Date | null) => void;
+  onDateRangeChange: (
+    startDate?: string,
+    endDate?: string,
+    clear?: boolean
+  ) => void;
 }
 
-function DateRangePicker({
-  startDate,
-  endDate,
-  onStartDateChange,
-  onEndDateChange,
-}: DateRangePickerProps) {
+function DateRangePicker({ onDateRangeChange }: DateRangePickerProps) {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const dateToString = (date: Date | null): string | undefined => {
+    if (date === null) return undefined;
+    return date.toISOString().split("T")[0];
+  };
+
+  const handleStartChange = (date: Date | null) => {
+    setStartDate(date);
+    const startStr = dateToString(date);
+    const endStr = dateToString(endDate);
+    onDateRangeChange(startStr, endStr, false);
+  };
+
+  const handleEndChange = (date: Date | null) => {
+    setEndDate(date);
+    const startStr = dateToString(startDate);
+    const endStr = dateToString(date);
+    onDateRangeChange(startStr, endStr, false);
+  };
+
   return (
-    <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+    <div className="date-inputs">
       <DatePicker
         selected={startDate}
-        onChange={onStartDateChange}
+        onChange={handleStartChange}
         selectsStart
         startDate={startDate}
         endDate={endDate}
@@ -28,11 +48,9 @@ function DateRangePicker({
         className="date-input"
       />
 
-      <span style={{ color: "#777" }}>—</span>
-
       <DatePicker
         selected={endDate}
-        onChange={onEndDateChange}
+        onChange={handleEndChange}
         selectsEnd
         startDate={startDate}
         endDate={endDate}
