@@ -1,6 +1,7 @@
 .pagination-controls {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .page-btn {

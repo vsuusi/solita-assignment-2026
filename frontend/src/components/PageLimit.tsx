@@ -1,3 +1,5 @@
+import "./PageLimit.css";
+
 interface PageLimitProps {
   itemsPerPage: number;
   onItemsPerPageChange: (limit: number) => void;

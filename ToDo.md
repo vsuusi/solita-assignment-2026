@@ -1,20 +1,18 @@
 [x] setup tests
 [ ] setup e2e tests
-[ ] make repo beautiful
-[ ] add test coverage report
-[ ] centralize types (via workspaces)
-[ ] write documentation
+[ ] write documentation (and ensure it works!)
 [ ] comment code where needed
 [ ] Naming conventions
 [ ] ut's for getting total pages (backend)
-[ ] frontend ut's
+[ ] frontend ut's (utils and isolated components)
 [ ] cleaning duty
-[ ] mainTableRow
 [ ] update favicon and title
-[ ] !! fix sorting by add NULLS LAST to sql queries
-[ ] calc negative streak and return in backend so it can be applied in sorting
-[x] make non sortable columns dispalying non-pointer cursor
-[x] implement mostExspensive hours in backend
-[ ] FIX resetting the pagination, using search params
-[ ] add units to price
+[ ] FIX resetting the pagination when coming back from drilldown, using search params
+[ ] add units to price (everywhere!)
 [ ] create a loader
+[ ] add build to CI / add a release/package of containers
+[ ] Finalize README; add AI usage raport to project/README.AI-USAGE.md OR in root README.md section Usage of AI tools
+[ ] Add hover tooltop for negative streak
+[ ] Handle warnings in maintable properly, what to render (drilldown also)
+[ ] clean frontend code, isolate to hooks, wrap router in error boundaries
+[ ] emtpy state

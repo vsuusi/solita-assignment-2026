@@ -44,6 +44,13 @@ function MainTable() {
     setPage(1);
   };
 
+  const getPriceClass = (price: number) => {
+    const base = "price-value";
+    if (price < 0) return `${base} price-neg`;
+    if (price > 10) return `${base} price-high`;
+    return `${base} price-norm`;
+  };
+
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(1);
@@ -65,8 +72,28 @@ function MainTable() {
   };
 
   // helpers
-  const getWarning = (issues: string[], keyword: string) => {
-    return issues.find((issue) => issue.toLowerCase().includes(keyword));
+  const getWarning = (
+    issues: string[],
+    keyword: string
+  ): string | undefined => {
+    const hasIssue = issues.some((issue) =>
+      issue.toLowerCase().includes(keyword)
+    );
+
+    if (!hasIssue) return undefined;
+
+    switch (keyword) {
+      case "missing":
+        return "Data is incomplete for this date.";
+      case "price":
+        return "Price data is missing or invalid.";
+      case "consumption":
+        return "Consumption data is missing or invalid.";
+      case "production":
+        return "Production data is missing or invalid.";
+      default:
+        return "This value contains invalid data.";
+    }
   };
 
   const renderSortArrow = (column: string) => {
@@ -111,12 +138,6 @@ function MainTable() {
         <h1>Daily electricity statistics</h1>
       </div>
 
-      <DateRangePicker onDateRangeChange={hanldeDateRangeChange} />
-      <PageLimit
-        itemsPerPage={limit}
-        onItemsPerPageChange={handleLimitChange}
-      />
-
       {loading && data.length === 0 && (
         <div className="status-message">Loading data...</div>
       )}
@@ -134,6 +155,13 @@ function MainTable() {
 
       {data.length > 0 && (
         <>
+          <div className="main-filters">
+            <DateRangePicker onDateRangeChange={hanldeDateRangeChange} />
+            <PageLimit
+              itemsPerPage={limit}
+              onItemsPerPageChange={handleLimitChange}
+            />
+          </div>
           <table className="main-table" style={{ opacity: loading ? 0.5 : 1 }}>
             <thead>
               <tr>
@@ -187,31 +215,30 @@ function MainTable() {
                 const prodWarning = getWarning(issues, "production");
                 return (
                   <tr key={row.date}>
-                    <td
-                      className={dateWarning ? "warning-cell" : ""}
-                      title={dateWarning}
-                    >
+                    <td title={dateWarning}>
                       {formatDate(row.date)} {dateWarning && "⚠️"}
                     </td>
-                    <td
-                      className={priceWarning ? "warning-cell" : ""}
-                      title={priceWarning}
-                    >
-                      {avgPrice}
+
+                    <td title={priceWarning}>
+                      {priceWarning && "⚠️"}{" "}
+                      <span className={getPriceClass(row.avgPrice)}>
+                        {avgPrice}
+                      </span>
                     </td>
-                    <td
-                      className={prodWarning ? "warning-cell" : ""}
-                      title={prodWarning}
-                    >
+
+                    <td title={prodWarning}>
+                      {prodWarning && "⚠️"}{" "}
                       {formatNumber(row.totalProductionMwh, 1)}
                     </td>
-                    <td
-                      className={consWarning ? "warning-cell" : ""}
-                      title={consWarning}
-                    >
+
+                    <td title={consWarning}>
+                      {consWarning && "⚠️"}{" "}
                       {formatKwhToMwhString(row.totalConsumptionKwh, 1)}
                     </td>
-                    <td>{longestNegativeStreak}</td>
+
+                    <td className="longest-negative-streak">
+                      {longestNegativeStreak}
+                    </td>
                     <td>
                       <Link to={detailsLink} className="view-btn">
                         View Details
@@ -221,12 +248,18 @@ function MainTable() {
                 );
               })}
             </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan={6} className="footer-pagination">
+                  <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={(newPage) => setPage(newPage)}
+                  />
+                </td>
+              </tr>
+            </tfoot>
           </table>
-          <Pagination
-            currentPage={page}
-            totalPages={totalPages}
-            onPageChange={(newPage) => setPage(newPage)}
-          />
         </>
       )}
     </>

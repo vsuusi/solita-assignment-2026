@@ -36,30 +36,34 @@ function DateRangePicker({ onDateRangeChange }: DateRangePickerProps) {
 
   return (
     <div className="date-inputs">
-      <DatePicker
-        selected={startDate}
-        onChange={handleStartChange}
-        selectsStart
-        startDate={startDate}
-        endDate={endDate}
-        placeholderText="Start Date"
-        dateFormat="yyyy-MM-dd"
-        isClearable
-        className="date-input"
-      />
+      <div className="picker-cage">
+        <DatePicker
+          selected={startDate}
+          onChange={handleStartChange}
+          selectsStart
+          startDate={startDate}
+          endDate={endDate}
+          placeholderText="Start Date"
+          dateFormat="yyyy-MM-dd"
+          isClearable
+          className="date-input"
+        />
+      </div>
 
-      <DatePicker
-        selected={endDate}
-        onChange={handleEndChange}
-        selectsEnd
-        startDate={startDate}
-        endDate={endDate}
-        minDate={startDate || undefined}
-        placeholderText="End Date"
-        dateFormat="yyyy-MM-dd"
-        isClearable
-        className="date-input"
-      />
+      <div className="picker-cage">
+        <DatePicker
+          selected={endDate}
+          onChange={handleEndChange}
+          selectsEnd
+          startDate={startDate}
+          endDate={endDate}
+          minDate={startDate || undefined}
+          placeholderText="End Date"
+          dateFormat="yyyy-MM-dd"
+          isClearable
+          className="date-input"
+        />
+      </div>
     </div>
   );
 }
