@@ -2,7 +2,7 @@ import type { HourlyData } from "../types";
 
 export function formatNumber(
   value: number | null | undefined,
-  digits: number = 1
+  digits: number = 1,
 ): string {
   if (value === null || value === undefined) {
     return "-";
@@ -16,7 +16,7 @@ export function formatNumber(
 
 export function formatKwhToMwhString(
   kwhValue: number | null | undefined,
-  digits: number = 1
+  digits: number = 1,
 ): string {
   if (kwhValue === null || kwhValue === undefined) return "-";
   return formatNumber(kwhValue / 1000, digits);
