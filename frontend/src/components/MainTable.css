@@ -7,10 +7,6 @@
   margin-top: 20px;
 }
 
-.main-header {
-  /* style header */
-}
-
 .main-filters {
   display: flex;
   justify-content: space-between;
@@ -72,8 +68,8 @@
   cursor: help;
 }
 
-.main-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+.main-table tr:nth-child(odd) {
+  background-color: var(--container-bg);
 }
 
 .main-table tr:hover {
@@ -88,13 +84,13 @@
   font-size: 80%;
   background-color: white;
   color: #4c83fa;
-  border: 1px solid #4c83fa;
+  border: 1px solid var(--color-primary-light);
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .view-btn:hover {
-  background-color: #4c83fa;
+  background-color: var(--color-primary);
   color: white;
   transform: translateY(-2px);
 }
@@ -102,7 +98,6 @@
 .sort-arrow {
   font-size: 0.8em;
   margin-left: 5px;
-  color: #999;
 }
 
 .price-value {

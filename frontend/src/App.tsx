@@ -27,7 +27,7 @@ const Layout = () => {
       </main>
 
       <footer>
-        <small>© 2026 Dev Academy Exercise</small>
+        <small>Data from Fingrid and porssisahko.net </small>
       </footer>
     </div>
   );

@@ -59,19 +59,19 @@
 
 .hourly-table {
   width: 100%;
-  border-collapse: collapse; /* Removes double borders */
+  border: 2px solid grey;
+  border-radius: 10px;
+  padding-inline: 10px;
   font-size: 0.9rem;
 }
 
-/* Header & Cell Shared Styles */
 .hourly-table th,
 .hourly-table td {
   padding: 12px 8px;
   border-bottom: 1px solid #e5e7eb;
-  text-align: right; /* Numbers align right */
+  text-align: right;
 }
 
-/* Header Specifics */
 .hourly-table th {
   color: #6b7280;
   font-weight: 600;
@@ -79,16 +79,14 @@
   text-transform: uppercase;
 }
 
-/* First Column (Time) - Align Left */
 .hourly-table th:first-child,
 .hourly-table td:first-child {
   text-align: left;
   color: #111827;
   font-weight: 500;
-  padding-left: 0; /* Align with page edge */
+  padding-left: 0;
 }
 
-/* Hover Effect */
 .hourly-table tbody tr:hover {
-  background-color: #f9fafb;
+  background-color: var(--page-bg);
 }

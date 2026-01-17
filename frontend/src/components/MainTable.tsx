@@ -134,9 +134,7 @@ function MainTable() {
 
   return (
     <>
-      <div className="main-header">
-        <h1>Daily electricity statistics</h1>
-      </div>
+      <h1>Daily electricity statistics</h1>
 
       {loading && data.length === 0 && (
         <div className="status-message">Loading data...</div>
