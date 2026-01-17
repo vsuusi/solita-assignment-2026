@@ -11,19 +11,12 @@ import { formatTime } from "../utils/utils";
 
 interface PriceChartProps {
   data: HourlyData[];
-  width: number;
   height: number;
 }
 
-function PriceChart({ data, width, height }: PriceChartProps) {
+function PriceChart({ data, height }: PriceChartProps) {
   return (
-    <LineChart
-      width={width}
-      height={height}
-      responsive
-      data={data}
-      margin={{ top: 30, right: 40, bottom: 10, left: 5 }}
-    >
+    <LineChart width="100%" height={height} responsive data={data}>
       <Line
         dataKey="hourlyprice"
         type="monotone"

@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  DollarSign,
+  Factory,
+  Zap,
+  Clock,
+  TrendingDown,
+  TrendingUp,
+  ChartColumn,
+  ChartSpline,
+} from "lucide-react";
 
 import type { SingleDayResponse, TopHours } from "../types";
 import { electricityApi } from "../api/electricityApi";
@@ -12,6 +23,7 @@ import {
 } from "../utils/utils";
 import PriceChart from "./PriceChart";
 import ElectricityChart from "./ElectricityChart";
+import StatCard from "./StatCard";
 
 import "./DetailedView.css";
 
@@ -50,85 +62,102 @@ function DetailedView() {
 
   const cheapestHours: TopHours[] = data.summary.cheapestHours;
   const mostExpensiveHours: TopHours[] = data.summary.mostExpensiveHours;
+  const mostExpensiveReversed = [...mostExpensiveHours].reverse();
 
   return (
-    <div className="single-day-container">
-      <div>
-        <h2>Date: {formatDate(date)}</h2>
+    <div className="details-container">
+      <div className="details-header">
+        <button
+          className="back-btn"
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          <ArrowLeft size={20} />
+          Go Back
+        </button>
+        <h2>{formatDate(date)}</h2>
       </div>
-      <button
-        onClick={() => {
-          navigate(-1);
-        }}
-      >
-        Go Back
-      </button>
       <div className="metrics-container">
         <div className="metrics-row">
-          <div className="metrics-block">
-            <h3>Total consumption</h3>
-            <p>{formatKwhToMwhString(data.summary.totalConsumptionKwh)}</p>
-          </div>
-
-          <div className="metrics-block">
-            <h3>Total production</h3>
-            <p>{formatNumber(data.summary.totalProductionMwh)}</p>
-          </div>
-
-          <div className="metrics-block">
-            <h3>Average price</h3>
-            <p>{formatNumber(data.summary.avgPrice, 2)}</p>
-          </div>
+          <StatCard
+            title="TOTAL PRODUCTION"
+            value={formatNumber(data.summary.totalProductionMwh)}
+            icon={Zap}
+            color="#16a34a"
+            comment="megawatthours per day"
+          />
+          <StatCard
+            title="TOTAL CONSUMPTION"
+            value={formatKwhToMwhString(data.summary.totalConsumptionKwh)}
+            icon={Factory}
+            comment="megawatthours per day"
+            color="#2563eb"
+          />
+          <StatCard
+            title="AVERAGE PRICE"
+            value={formatNumber(data.summary.avgPrice)}
+            icon={DollarSign}
+            color="#f7d931ff"
+            comment="cents per kilowatthour"
+          />
         </div>
 
         <div className="metrics-row">
-          <div className="metrics-block">
-            <h3>Peak production hour</h3>
-            <p>{peakProd ? formatTime(peakProd.starttime) : "-"}</p>
-            <p>{formatNumber(peakProd?.productionamount)}</p>
-          </div>
-
-          <div className="metrics-block">
-            <h3>Peak consumption hour</h3>
-            <p>{peakCons ? formatTime(peakCons.starttime) : "-"}</p>
-            <p>{formatKwhToMwhString(peakCons?.consumptionamount)}</p>
-          </div>
+          <StatCard
+            title="PEAK CONSUMPTION HOUR"
+            value={peakCons ? formatTime(peakCons.starttime) : "-"}
+            icon={Clock}
+            color="#eb9628ff"
+            comment={formatKwhToMwhString(peakCons?.consumptionamount) + " MWh"}
+          />
+          <StatCard
+            title="PEAK PRODUCTION HOUR"
+            value={peakProd ? formatTime(peakProd.starttime) : "-"}
+            icon={Clock}
+            color="#16a34a"
+            comment={formatNumber(peakProd?.productionamount) + " MWh"}
+          />
         </div>
 
         <div className="metrics-row">
-          <div className="metrics-block">
-            <h3>Cheapest hours</h3>
-            <div>
-              {cheapestHours.map((hour) => (
-                <span key={hour.time} className="price-tag green">
-                  {formatTime(hour.time)}:{" "}
-                  <b>{formatNumber(hour.price, 2)} c</b>
+          <StatCard title="Cheapest Hours" icon={TrendingDown} color="#16a34a">
+            {cheapestHours.map((hour) => (
+              <div key={hour.time} className="stat-list-row">
+                <span className="stat-list-label">{formatTime(hour.time)}</span>
+                <span className="stat-list-value">
+                  {formatNumber(hour.price, 2)} c
                 </span>
-              ))}
-            </div>
-          </div>
-          <div className="metrics-block">
-            <h3>Most expensive hours</h3>
-            <div>
-              {mostExpensiveHours.map((hour) => (
-                <span key={hour.time} className="price-tag red">
-                  {formatTime(hour.time)}:{" "}
-                  <b>{formatNumber(hour.price, 2)} c</b>
+              </div>
+            ))}
+          </StatCard>
+
+          <StatCard
+            title="Most Expensive Hours"
+            icon={TrendingUp}
+            color="#dc2626"
+          >
+            {mostExpensiveReversed.map((hour) => (
+              <div key={hour.time} className="stat-list-row">
+                <span className="stat-list-label">{formatTime(hour.time)}</span>
+                <span className="stat-list-value">
+                  {formatNumber(hour.price, 2)} c
                 </span>
-              ))}
-            </div>
-          </div>
+              </div>
+            ))}
+          </StatCard>
         </div>
 
         <div className="metrics-row">
-          <h3>Electricity chart</h3>
-          <ElectricityChart data={data.hourlyData} width={700} height={250} />
+          <StatCard title="Price movement" icon={ChartSpline} color="grey">
+            <PriceChart data={data.hourlyData} height={250} />
+          </StatCard>
         </div>
 
         <div className="metrics-row">
-          <div className="metrics-block-chart"></div>
-          <h3>Price movement</h3>
-          <PriceChart data={data.hourlyData} width={700} height={250} />
+          <StatCard title="Electricity pattern" icon={ChartColumn} color="grey">
+            <ElectricityChart data={data.hourlyData} height={250} />
+          </StatCard>
         </div>
       </div>
 
@@ -138,7 +167,7 @@ function DetailedView() {
           <thead>
             <tr>
               <th>Hour</th>
-              <th>Price</th>
+              <th>Price (c/kWh)</th>
               <th>Production (MWh)</th>
               <th>Consumption (MWh)</th>
             </tr>
@@ -157,6 +186,15 @@ function DetailedView() {
           </tbody>
         </table>
       </div>
+      <button
+        className="back-btn"
+        onClick={() => {
+          navigate(-1);
+        }}
+      >
+        <ArrowLeft size={20} />
+        Go Back
+      </button>
     </div>
   );
 }
