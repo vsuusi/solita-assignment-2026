@@ -135,8 +135,6 @@ function MainTable() {
 
   return (
     <>
-      <h1>Daily electricity statistics</h1>
-
       {loading && data.length === 0 && <Loader />}
 
       {error && <p>Error loading data: {error}</p>}
