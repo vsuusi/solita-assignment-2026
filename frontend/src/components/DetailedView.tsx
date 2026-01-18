@@ -24,6 +24,7 @@ import {
 import PriceChart from "./PriceChart";
 import ElectricityChart from "./ElectricityChart";
 import StatCard from "./StatCard";
+import Loader from "./Loader";
 
 import "./DetailedView.css";
 
@@ -32,7 +33,7 @@ function DetailedView() {
 
   const [data, setData] = useState<SingleDayResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  // const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -44,9 +45,11 @@ function DetailedView() {
         setLoading(true);
         const resp = await electricityApi.getSingleDayElectricityData(date);
         setData(resp);
+        setError(null);
         console.log("Single day resp", resp);
       } catch (e) {
         console.error("error", e);
+        setError("Failed to fetch data");
       } finally {
         setLoading(false);
       }
@@ -54,8 +57,9 @@ function DetailedView() {
     fetchData();
   }, [date]);
 
-  if (loading) return <h3>Loading data...</h3>;
+  if (loading) return <Loader />;
   if (!data) return null;
+  if (error) return <h3>{error}</h3>;
 
   const peakCons = findPeakHour(data.hourlyData, "consumptionamount");
   const peakProd = findPeakHour(data.hourlyData, "productionamount");

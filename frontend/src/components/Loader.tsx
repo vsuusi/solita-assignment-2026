@@ -1,6 +1,11 @@
+import "./Loader.css";
+
 function Loader() {
-  // import nice loader here or implement custom one
-  return <div>Loading...</div>;
+  return (
+    <div className="loader-wrapper">
+      <div className="loader"></div>
+    </div>
+  );
 }
 
 export default Loader;
