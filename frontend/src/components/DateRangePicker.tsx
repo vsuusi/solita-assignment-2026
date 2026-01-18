@@ -7,7 +7,7 @@ interface DateRangePickerProps {
   onDateRangeChange: (
     startDate?: string,
     endDate?: string,
-    clear?: boolean
+    clear?: boolean,
   ) => void;
 }
 
@@ -36,7 +36,7 @@ function DateRangePicker({ onDateRangeChange }: DateRangePickerProps) {
 
   return (
     <div className="date-inputs">
-      <div className="picker-cage">
+      <div data-testid="start-date-picker" className="picker-cage">
         <DatePicker
           selected={startDate}
           onChange={handleStartChange}
@@ -50,7 +50,7 @@ function DateRangePicker({ onDateRangeChange }: DateRangePickerProps) {
         />
       </div>
 
-      <div className="picker-cage">
+      <div data-testid="end-date-picker" className="picker-cage">
         <DatePicker
           selected={endDate}
           onChange={handleEndChange}

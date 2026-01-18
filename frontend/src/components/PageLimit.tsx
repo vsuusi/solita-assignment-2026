@@ -12,6 +12,7 @@ const PageLimit = ({ itemsPerPage, onItemsPerPageChange }: PageLimitProps) => {
     <div className="pagination-limit">
       <label htmlFor="limit-select">Rows per page:</label>
       <select
+        data-testid="pagination-limit"
         id="limit-select"
         value={itemsPerPage}
         onChange={(e) => onItemsPerPageChange(Number(e.target.value))}

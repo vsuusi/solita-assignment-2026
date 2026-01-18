@@ -27,10 +27,10 @@ function MainTable() {
 
   // states for date selection
   const [appliedStartDate, setAppliedStartDate] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [appliedEndDate, setAppliedEndDate] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
   // handlers
@@ -59,7 +59,7 @@ function MainTable() {
   const hanldeDateRangeChange = (
     startDate?: string,
     endDate?: string,
-    clear?: boolean
+    clear?: boolean,
   ) => {
     if (clear) {
       setAppliedStartDate(undefined);
@@ -74,10 +74,10 @@ function MainTable() {
   // helpers
   const getWarning = (
     issues: string[],
-    keyword: string
+    keyword: string,
   ): string | undefined => {
     const hasIssue = issues.some((issue) =>
-      issue.toLowerCase().includes(keyword)
+      issue.toLowerCase().includes(keyword),
     );
 
     if (!hasIssue) return undefined;
@@ -113,7 +113,7 @@ function MainTable() {
             sortBy,
             sortOrder,
             appliedStartDate,
-            appliedEndDate
+            appliedEndDate,
           );
 
         console.log("Full response:", resp);
@@ -173,7 +173,7 @@ function MainTable() {
                   onClick={() => handleSortChange("avgPrice")}
                   className="main-table-header clickable"
                 >
-                  Avg Price (c){renderSortArrow("avgPrice")}
+                  Avg Price (€){renderSortArrow("avgPrice")}
                 </th>
                 <th
                   onClick={() => handleSortChange("totalProductionMwh")}
@@ -199,7 +199,9 @@ function MainTable() {
 
             <tbody>
               {data.map((row) => {
-                const avgPrice = row.avgPrice?.toFixed(2) ?? "-";
+                const avgPrice = row.avgPrice
+                  ? (row.avgPrice / 100).toFixed(2)
+                  : "-";
                 const longestNegativeStreak =
                   row.longestNegativeStreak > 0
                     ? row.longestNegativeStreak

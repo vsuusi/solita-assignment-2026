@@ -7,7 +7,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import type { HourlyData } from "../types";
-import { formatTime } from "../utils/utils";
+import { formatTime, formatNumber } from "../utils/utils";
 
 interface PriceChartProps {
   data: HourlyData[];
@@ -34,7 +34,7 @@ function PriceChart({ data, height }: PriceChartProps) {
       <Tooltip
         labelFormatter={formatTime}
         formatter={(value: number | undefined) => [
-          value !== undefined ? `${value.toFixed(2)} c/kWh` : "N/A",
+          value !== undefined ? `${formatNumber(value, 1)} c/kWh` : "N/A",
           "Price",
         ]}
       />

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  DollarSign,
   Factory,
   Zap,
   Clock,
@@ -10,6 +9,7 @@ import {
   TrendingUp,
   ChartColumn,
   ChartSpline,
+  Euro,
 } from "lucide-react";
 
 import type { SingleDayResponse, TopHours } from "../types";
@@ -69,6 +69,7 @@ function DetailedView() {
       <div className="details-header">
         <button
           className="back-btn"
+          data-testid="back-btn"
           onClick={() => {
             navigate(-1);
           }}
@@ -96,10 +97,10 @@ function DetailedView() {
           />
           <StatCard
             title="AVERAGE PRICE"
-            value={formatNumber(data.summary.avgPrice)}
-            icon={DollarSign}
-            color="#f7d931ff"
-            comment="cents per kilowatthour"
+            value={formatNumber(data.summary.avgPrice / 100)}
+            icon={Euro}
+            color="#f8c024ff"
+            comment="eur per kilowatthour"
           />
         </div>
 
@@ -121,19 +122,19 @@ function DetailedView() {
         </div>
 
         <div className="metrics-row">
-          <StatCard title="Cheapest Hours" icon={TrendingDown} color="#16a34a">
+          <StatCard title="CHEAPEST HOURS" icon={TrendingDown} color="#16a34a">
             {cheapestHours.map((hour) => (
               <div key={hour.time} className="stat-list-row">
                 <span className="stat-list-label">{formatTime(hour.time)}</span>
                 <span className="stat-list-value">
-                  {formatNumber(hour.price, 2)} c
+                  {formatNumber(hour.price / 100, 2)} €
                 </span>
               </div>
             ))}
           </StatCard>
 
           <StatCard
-            title="Most Expensive Hours"
+            title="MOST EXPENSIVE HOURS"
             icon={TrendingUp}
             color="#dc2626"
           >
@@ -141,7 +142,7 @@ function DetailedView() {
               <div key={hour.time} className="stat-list-row">
                 <span className="stat-list-label">{formatTime(hour.time)}</span>
                 <span className="stat-list-value">
-                  {formatNumber(hour.price, 2)} c
+                  {formatNumber(hour.price / 100, 2)} €
                 </span>
               </div>
             ))}
@@ -149,13 +150,13 @@ function DetailedView() {
         </div>
 
         <div className="metrics-row">
-          <StatCard title="Price movement" icon={ChartSpline} color="grey">
+          <StatCard title="PRICE MOVEMENT" icon={ChartSpline} color="#af1696ff">
             <PriceChart data={data.hourlyData} height={250} />
           </StatCard>
         </div>
 
         <div className="metrics-row">
-          <StatCard title="Electricity pattern" icon={ChartColumn} color="grey">
+          <StatCard title="ELECTRICITY PATTERN" icon={ChartColumn}>
             <ElectricityChart data={data.hourlyData} height={250} />
           </StatCard>
         </div>
@@ -167,7 +168,7 @@ function DetailedView() {
           <thead>
             <tr>
               <th>Hour</th>
-              <th>Price (c/kWh)</th>
+              <th>Price (€/kWh)</th>
               <th>Production (MWh)</th>
               <th>Consumption (MWh)</th>
             </tr>
@@ -177,7 +178,7 @@ function DetailedView() {
               return (
                 <tr key={hour.starttime}>
                   <td>{formatTime(hour.starttime)}</td>
-                  <td>{formatNumber(hour.hourlyprice, 2)}</td>
+                  <td>{formatNumber(hour.hourlyprice / 100, 3)}</td>
                   <td>{formatNumber(hour.productionamount)}</td>
                   <td>{formatKwhToMwhString(hour.consumptionamount)}</td>
                 </tr>
@@ -188,6 +189,7 @@ function DetailedView() {
       </div>
       <button
         className="back-btn"
+        data-testid="back-btn"
         onClick={() => {
           navigate(-1);
         }}
