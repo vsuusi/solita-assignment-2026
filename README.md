@@ -141,6 +141,8 @@ This repository includes a GitHub Actions workflow at `.github/workflows/ci.yaml
 - Runs unit tests and linter for both backend and frontend
 - Runs e2e-tests
 
+Main branch is protected and successful CI run is required to merge PR to main.
+
 ## Usage of AI tools
 
 - **Code review / PR assistance:** Coderabbit AI was tested out for this project to catch bugs in PR reviews.
