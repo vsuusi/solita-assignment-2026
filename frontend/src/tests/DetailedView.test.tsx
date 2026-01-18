@@ -33,7 +33,7 @@ describe("DetailedView tests", () => {
 
     const date = await screen.findByText("Jan 15, 2026");
     expect(date).toBeInTheDocument();
-    expect(screen.getByText("15.5")).toBeInTheDocument();
+    expect(screen.getByText("0.16")).toBeInTheDocument(); // price in eur rounded up
     expect(screen.getByText("50.0")).toBeInTheDocument(); // total cons MWh
 
     expect(electricityApi.getSingleDayElectricityData).toHaveBeenCalledOnce();

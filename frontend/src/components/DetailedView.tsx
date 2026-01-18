@@ -178,7 +178,7 @@ function DetailedView() {
               return (
                 <tr key={hour.starttime}>
                   <td>{formatTime(hour.starttime)}</td>
-                  <td>{formatNumber(hour.hourlyprice / 100, 2)}</td>
+                  <td>{formatNumber(hour.hourlyprice / 100, 3)}</td>
                   <td>{formatNumber(hour.productionamount)}</td>
                   <td>{formatKwhToMwhString(hour.consumptionamount)}</td>
                 </tr>
