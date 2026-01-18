@@ -40,8 +40,8 @@ TypeScript for the whole stack, react with vite for frontend, node express for b
 
 1. On project root dir run:
 
-```
-$ docker compose up --build --renew-anon-volumes -d
+```bash
+docker compose up --build --renew-anon-volumes -d
 ```
 
 2. Application is now accessible at http://localhost:8080/
@@ -51,23 +51,23 @@ $ docker compose up --build --renew-anon-volumes -d
 1. Start the database by running on project root:
 
 ```bash
-$ docker compose up --build --renew-anon-volumes -d
+docker compose up --build --renew-anon-volumes -d db
 ```
 
-2. Start the backend (hot reload):
+2. Start the backend (hot reload via nodemon):
 
 ```bash
-$ cd backend
-$ npm install
-$ npm run dev
+cd backend
+npm install
+npm run dev
 ```
 
 3. Start the frontend by opening up new terminal and run (hot reload):
 
 ```bash
-$ cd frontend
-$ npm install
-$ npm run dev
+cd frontend
+npm install
+npm run dev
 ```
 
 4. Frontend dev server is now accessible at http://localhost:5173/
@@ -133,6 +133,8 @@ Or run headless (CI / terminal):
 npm install
 npm run cy:run
 ```
+
+Note: If Cypress fails to start, you may need to install system dependencies. More info can be found [here.](https://on.cypress.io/required-dependencies)
 
 ## Continuous Integration (CI)
 

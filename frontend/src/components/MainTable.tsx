@@ -8,6 +8,7 @@ import Pagination from "./Pagination";
 import PageLimit from "./PageLimit";
 import DateRangePicker from "./DateRangePicker";
 import EmptyState from "./EmptyState";
+import Loader from "./Loader";
 import "react-datepicker/dist/react-datepicker.css"; // load css in parent
 import "./MainTable.css";
 
@@ -134,11 +135,7 @@ function MainTable() {
 
   return (
     <>
-      <h1>Daily electricity statistics</h1>
-
-      {loading && data.length === 0 && (
-        <div className="status-message">Loading data...</div>
-      )}
+      {loading && data.length === 0 && <Loader />}
 
       {error && <p>Error loading data: {error}</p>}
 
