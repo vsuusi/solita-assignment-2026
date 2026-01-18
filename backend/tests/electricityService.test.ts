@@ -22,7 +22,7 @@ describe("Electricity Service", () => {
             hoursCount: 24,
           },
         ],
-        meta: { page: 1, limit: 10 },
+        meta: { page: 1, limit: 10, totalPages: 1 },
       };
 
       const mockHourlyData = [
@@ -53,7 +53,7 @@ describe("Electricity Service", () => {
     it("should handle empty database results gracefully", async () => {
       jest.spyOn(electricityRepository, "getDailySummaries").mockResolvedValue({
         rows: [],
-        meta: { page: 1, limit: 10 },
+        meta: { page: 1, limit: 10, totalPages: 0 },
       });
 
       const result = await electricityService.getDaily(1, 10, "date", "ASC");
@@ -108,7 +108,7 @@ describe("Electricity Service", () => {
         .mockResolvedValue([]);
 
       await expect(
-        electricityService.getSingleDay("2023-01-01")
+        electricityService.getSingleDay("2023-01-01"),
       ).rejects.toThrow("No data found");
     });
 
@@ -130,10 +130,10 @@ describe("Electricity Service", () => {
 
       expect(result.quality.isValid).toBe(false);
       expect(result.quality.issues).toContainEqual(
-        expect.stringMatching(/entries with null price/)
+        expect.stringMatching(/entries with null price/),
       );
       expect(result.quality.issues).toContainEqual(
-        expect.stringMatching(/entries with null production/)
+        expect.stringMatching(/entries with null production/),
       );
     });
   });
