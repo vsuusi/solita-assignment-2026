@@ -22,14 +22,17 @@ export function formatKwhToMwhString(
   return formatNumber(kwhValue / 1000, digits);
 }
 
-export function formatTime(isoString: string): string {
-  if (!isoString || isoString === undefined) return "-";
-  return new Date(isoString).toLocaleTimeString([], {
+export const formatTime = (dateString: string): string => {
+  if (!dateString) return "-";
+
+  const date = new Date(dateString);
+
+  return new Intl.DateTimeFormat("fi-FI", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false,
-  });
-}
+    timeZone: "Europe/Helsinki", // quick fix for timezone shift bug
+  }).format(date);
+};
 
 export function formatDate(dateString: string | undefined): string {
   if (!dateString || dateString === undefined) return "-";
