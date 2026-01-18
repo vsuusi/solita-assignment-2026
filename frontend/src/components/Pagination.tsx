@@ -47,6 +47,7 @@ const Pagination = ({
         className="page-btn"
         disabled={currentPage === totalPages || totalPages === 0}
         onClick={() => onPageChange(currentPage + 1)}
+        data-testid="page-btn-next"
       >
         <div className="page-btn-icon">
           <ChevronRight size={18} />

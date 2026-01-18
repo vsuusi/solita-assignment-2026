@@ -2,7 +2,7 @@ import type { HourlyData } from "../types";
 
 export function formatNumber(
   value: number | null | undefined,
-  digits: number = 1,
+  digits: number = 2,
 ): string {
   if (value === null || value === undefined) {
     return "-";

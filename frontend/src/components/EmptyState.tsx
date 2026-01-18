@@ -22,7 +22,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 
       {showClearButton && onClear && (
         <button onClick={onClear} className="empty-state-btn">
-          Clear Filters
+          Go Back
         </button>
       )}
     </div>
