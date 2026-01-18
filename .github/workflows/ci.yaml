@@ -56,3 +56,40 @@ jobs:
 
       - name: Test Frontend
         run: npm run test:ci
+
+  e2e-test:
+    name: e2e Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Cypress
+        run: npm ci
+
+      - name: Start the app
+        run: |
+          docker compose up --build -d --renew-anon-volumes
+
+      - name: Wait for service to be running
+        run: |
+          set -e
+          echo "Waiting for frontend at http://localhost:8080"
+          for i in $(seq 1 40); do
+            if curl -sSf http://localhost:8080 >/dev/null; then
+              break
+            fi
+            sleep 3
+          done
+
+      - name: Run Cypress tests
+        run: npm run cy:run
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v --remove-orphans
