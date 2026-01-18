@@ -1,14 +1,36 @@
+.main-table-container {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Clips content to rounded corners */
+  margin-top: 20px;
+}
+
+.main-filters {
+  display: flex;
+  justify-content: space-between;
+}
+
 .main-table {
   width: 100%;
-  border-collapse: collapse; /* Removes double borders */
+  border-collapse: separate;
+  border-spacing: 0;
   margin-top: 20px;
-  transition: opacity 0.3s ease; /* Smooth transition for loading state */
+  transition: opacity 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .main-table td {
   border: 1px solid #ddd;
   padding: 12px;
-  text-align: left;
+  text-align: center;
+  margin-left: 15px;
+  height: 26px;
+  border: none;
 }
 
 .main-table-header {
@@ -16,8 +38,21 @@
   font-weight: bold;
   border: 1px solid #ddd;
   padding: 12px;
-  text-align: left;
+  text-align: center;
   transition: background-color 0.2s;
+}
+
+/* date column header */
+.main-table td:nth-child(1) {
+  width: 140px;
+}
+
+/* rest columns */
+.main-table td:nth-child(2),
+.main-table td:nth-child(3),
+.main-table td:nth-child(4) {
+  width: 120px;
+  text-align: right;
 }
 
 .main-table-header.clickable {
@@ -29,38 +64,63 @@
   background-color: #e2e2e2;
 }
 
-.main-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+.main-table-header.neg-streak {
+  cursor: help;
+}
+
+.main-table tr:nth-child(odd) {
+  background-color: var(--container-bg);
 }
 
 .main-table tr:hover {
   background-color: #f1f1f1;
 }
 
-.warning-cell {
-  background-color: #fff7ed; /* Light Orange/Yellow */
-  color: #c2410c; /* Dark Orange Text */
-  cursor: help; /* Shows '?' cursor */
-  font-weight: 500;
-  position: relative; /* For potential future custom tooltips */
-}
-
-.warning-cell:hover {
-  background-color: #ffedd5; /* Slightly darker on hover */
-}
-
 .view-btn {
+  display: inline-block;
   text-decoration: none;
-  color: #2563eb;
-  font-weight: 500;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  font-size: 80%;
+  background-color: white;
+  color: #4c83fa;
+  border: 1px solid var(--color-primary-light);
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .view-btn:hover {
-  text-decoration: underline;
+  background-color: var(--color-primary);
+  color: white;
+  transform: translateY(-2px);
 }
 
 .sort-arrow {
   font-size: 0.8em;
   margin-left: 5px;
-  color: #999;
+}
+
+.price-value {
+  font-weight: 700;
+}
+
+.price-neg {
+  color: #16a34a;
+}
+
+.price-high {
+  color: #dc2626;
+}
+
+.price-norm {
+  color: #374151;
+}
+
+.longest-negative-streak {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.footer-pagination {
+  background-color: #f4f4f4;
 }

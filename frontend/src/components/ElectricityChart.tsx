@@ -4,11 +4,10 @@ import { formatTime } from "../utils/utils";
 
 interface ElectricityChartProps {
   data: HourlyData[];
-  width: number;
   height: number;
 }
 
-function ElectricityChart({ data, width, height }: ElectricityChartProps) {
+function ElectricityChart({ data, height }: ElectricityChartProps) {
   const chartData = data.map((item) => ({
     ...item,
     consumptionMwh: (item.consumptionamount || 0) / 1000,
@@ -16,12 +15,7 @@ function ElectricityChart({ data, width, height }: ElectricityChartProps) {
   }));
 
   return (
-    <BarChart
-      width={width}
-      height={height}
-      data={chartData}
-      margin={{ top: 30, right: 40, bottom: 10, left: 5 }}
-    >
+    <BarChart width="100%" height={height} data={chartData}>
       <CartesianGrid stroke="#eee" strokeDasharray="5 5" vertical={false} />
       <XAxis dataKey="starttime" tickFormatter={formatTime} minTickGap={30} />
       <YAxis label={{ value: "MWh", position: "insideLeft", angle: -90 }} />

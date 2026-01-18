@@ -1,0 +1,71 @@
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Dynamic border color*/
+  border: 2px solid var(--card-color);
+}
+.stat-card:hover {
+  filter: brightness(1.1);
+}
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--card-color);
+
+  background-color: color-mix(in srgb, var(--card-color), white 90%);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.stat-list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0px;
+  border-bottom: 1px dashed #8e9092;
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.stat-comment {
+  font-size: 0.85rem;
+  color: var(--card-color);
+}

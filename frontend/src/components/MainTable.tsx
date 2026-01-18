@@ -5,6 +5,7 @@ import type { DailyListItem, DailyListResponse } from "../types";
 import { formatKwhToMwhString, formatNumber, formatDate } from "../utils/utils";
 import { electricityApi } from "../api/electricityApi";
 import Pagination from "./Pagination";
+import PageLimit from "./PageLimit";
 import DateRangePicker from "./DateRangePicker";
 import EmptyState from "./EmptyState";
 import "react-datepicker/dist/react-datepicker.css"; // load css in parent
@@ -15,6 +16,7 @@ function MainTable() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // states for sorting table
   const [sortBy, setSortBy] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
 
@@ -23,37 +25,15 @@ function MainTable() {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
 
-  // states for date picker
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [appliedStart, setAppliedStart] = useState<string | undefined>(
+  // states for date selection
+  const [appliedStartDate, setAppliedStartDate] = useState<string | undefined>(
     undefined
   );
-  const [appliedEnd, setAppliedEnd] = useState<string | undefined>(undefined);
+  const [appliedEndDate, setAppliedEndDate] = useState<string | undefined>(
+    undefined
+  );
 
   // handlers
-  const handleApplyFilters = () => {
-    // Date Picker component uses Date, api uses YYYY-MM-DD string
-    const formatApiDate = (date: Date | null) => {
-      if (!date) return undefined;
-      const offset = date.getTimezoneOffset();
-      const dateLocal = new Date(date.getTime() - offset * 60 * 1000);
-      return dateLocal.toISOString().split("T")[0];
-    };
-
-    setAppliedStart(formatApiDate(startDate));
-    setAppliedEnd(formatApiDate(endDate));
-    setPage(1);
-  };
-
-  const hanldeClearFilters = () => {
-    setStartDate(null);
-    setEndDate(null);
-    setAppliedStart(undefined);
-    setAppliedEnd(undefined);
-    setPage(1);
-  };
-
   const handleSortChange = (column: string) => {
     if (sortBy === column) {
       setSortOrder((prev) => (prev === "ASC" ? "DESC" : "ASC"));
@@ -64,11 +44,64 @@ function MainTable() {
     setPage(1);
   };
 
+  const getPriceClass = (price: number) => {
+    const base = "price-value";
+    if (price < 0) return `${base} price-neg`;
+    if (price > 10) return `${base} price-high`;
+    return `${base} price-norm`;
+  };
+
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(1);
   };
 
+  const hanldeDateRangeChange = (
+    startDate?: string,
+    endDate?: string,
+    clear?: boolean
+  ) => {
+    if (clear) {
+      setAppliedStartDate(undefined);
+      setAppliedEndDate(undefined);
+    } else {
+      setAppliedStartDate(startDate);
+      setAppliedEndDate(endDate);
+    }
+    setPage(1);
+  };
+
+  // helpers
+  const getWarning = (
+    issues: string[],
+    keyword: string
+  ): string | undefined => {
+    const hasIssue = issues.some((issue) =>
+      issue.toLowerCase().includes(keyword)
+    );
+
+    if (!hasIssue) return undefined;
+
+    switch (keyword) {
+      case "missing":
+        return "Data is incomplete for this date.";
+      case "price":
+        return "Price data is missing or invalid.";
+      case "consumption":
+        return "Consumption data is missing or invalid.";
+      case "production":
+        return "Production data is missing or invalid.";
+      default:
+        return "This value contains invalid data.";
+    }
+  };
+
+  const renderSortArrow = (column: string) => {
+    if (sortBy !== column) return <span className="sort-arrow" />;
+    return sortOrder === "ASC" ? " ▲" : " ▼";
+  };
+
+  // data fetching
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,8 +112,8 @@ function MainTable() {
             limit,
             sortBy,
             sortOrder,
-            appliedStart,
-            appliedEnd
+            appliedStartDate,
+            appliedEndDate
           );
 
         console.log("Full response:", resp);
@@ -97,45 +130,11 @@ function MainTable() {
       }
     };
     fetchData();
-  }, [sortBy, sortOrder, page, appliedStart, appliedEnd, limit]);
-
-  // helpers
-  const getWarning = (issues: string[], keyword: string) => {
-    return issues.find((issue) => issue.toLowerCase().includes(keyword));
-  };
-
-  const renderSortArrow = (column: string) => {
-    if (sortBy !== column) return <span className="sort-arrow">↕</span>;
-    return sortOrder === "ASC" ? " ▲" : " ▼";
-  };
+  }, [sortBy, sortOrder, page, appliedStartDate, appliedEndDate, limit]);
 
   return (
-    <div className="wrapper">
+    <>
       <h1>Daily electricity statistics</h1>
-
-      <div className="filter-bar">
-        <div>
-          <label className="filter-label">Date Range:</label>
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            onStartDateChange={setStartDate}
-            onEndDateChange={setEndDate}
-          />
-        </div>
-
-        <div className="filter-actions">
-          <button onClick={handleApplyFilters} className="btn btn-primary">
-            Apply
-          </button>
-
-          {(startDate || endDate) && (
-            <button onClick={hanldeClearFilters} className="btn btn-secondary">
-              Clear
-            </button>
-          )}
-        </div>
-      </div>
 
       {loading && data.length === 0 && (
         <div className="status-message">Loading data...</div>
@@ -147,13 +146,20 @@ function MainTable() {
         <EmptyState
           title="No data found"
           description="Try adjusting your date range or clearing the filters."
-          showClearButton={Boolean(startDate || endDate)}
-          onClear={hanldeClearFilters}
+          showClearButton={Boolean(appliedStartDate || appliedEndDate)}
+          onClear={() => hanldeDateRangeChange(undefined, undefined, true)}
         />
       )}
 
       {data.length > 0 && (
         <>
+          <div className="main-filters">
+            <DateRangePicker onDateRangeChange={hanldeDateRangeChange} />
+            <PageLimit
+              itemsPerPage={limit}
+              onItemsPerPageChange={handleLimitChange}
+            />
+          </div>
           <table className="main-table" style={{ opacity: loading ? 0.5 : 1 }}>
             <thead>
               <tr>
@@ -167,7 +173,7 @@ function MainTable() {
                   onClick={() => handleSortChange("avgPrice")}
                   className="main-table-header clickable"
                 >
-                  Avg Price{renderSortArrow("avgPrice")}
+                  Avg Price (c){renderSortArrow("avgPrice")}
                 </th>
                 <th
                   onClick={() => handleSortChange("totalProductionMwh")}
@@ -181,8 +187,12 @@ function MainTable() {
                 >
                   Consumption (MWh){renderSortArrow("totalConsumptionKwh")}
                 </th>
-                <th className="main-table-header">Neg. Streak (h)</th>
-                {/* need to add sorting */}
+                <th
+                  className="main-table-header neg-streak"
+                  title="Longest consecutive hours when price was negative"
+                >
+                  Neg. Streak (h)
+                </th>
                 <th className="main-table-header">Action</th>
               </tr>
             </thead>
@@ -203,31 +213,30 @@ function MainTable() {
                 const prodWarning = getWarning(issues, "production");
                 return (
                   <tr key={row.date}>
-                    <td
-                      className={dateWarning ? "warning-cell" : ""}
-                      title={dateWarning}
-                    >
+                    <td title={dateWarning}>
                       {formatDate(row.date)} {dateWarning && "⚠️"}
                     </td>
-                    <td
-                      className={priceWarning ? "warning-cell" : ""}
-                      title={priceWarning}
-                    >
-                      {avgPrice}
+
+                    <td title={priceWarning}>
+                      {priceWarning && "⚠️"}{" "}
+                      <span className={getPriceClass(row.avgPrice)}>
+                        {avgPrice}
+                      </span>
                     </td>
-                    <td
-                      className={prodWarning ? "warning-cell" : ""}
-                      title={prodWarning}
-                    >
+
+                    <td title={prodWarning}>
+                      {prodWarning && "⚠️"}{" "}
                       {formatNumber(row.totalProductionMwh, 1)}
                     </td>
-                    <td
-                      className={consWarning ? "warning-cell" : ""}
-                      title={consWarning}
-                    >
+
+                    <td title={consWarning}>
+                      {consWarning && "⚠️"}{" "}
                       {formatKwhToMwhString(row.totalConsumptionKwh, 1)}
                     </td>
-                    <td>{longestNegativeStreak}</td>
+
+                    <td className="longest-negative-streak">
+                      {longestNegativeStreak}
+                    </td>
                     <td>
                       <Link to={detailsLink} className="view-btn">
                         View Details
@@ -237,17 +246,21 @@ function MainTable() {
                 );
               })}
             </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan={6} className="footer-pagination">
+                  <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={(newPage) => setPage(newPage)}
+                  />
+                </td>
+              </tr>
+            </tfoot>
           </table>
-          <Pagination
-            currentPage={page}
-            totalPages={totalPages}
-            onPageChange={(newPage) => setPage(newPage)}
-            itemsPerPage={limit}
-            onItemsPerPageChange={handleLimitChange}
-          />
         </>
       )}
-    </div>
+    </>
   );
 }
 

@@ -1,20 +1,92 @@
-.single-day-container {
-  background-color: rgb(219, 248, 248);
+.details-container {
+  width: 100%;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-left: -12px;
+
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  color: #111827;
+  background-color: #f3f4f6;
 }
 
 .metrics-row {
   display: flex;
   flex-direction: row;
-  background-color: rgb(249, 255, 213);
-  margin-block: 1rem;
-  justify-content: center;
-  gap: 1rem;
+  margin-block: 1.5rem;
+  gap: 1.5rem;
 }
 
-.metrics-block {
-  background-color: rgb(255, 218, 175);
+/* select all metrics row children */
+.metrics-row > * {
+  flex: 1;
+  min-width: 0;
 }
 
-.metrics-block-chart {
-  background-color: burlywood;
+.metrics-chart {
+  background-color: rgb(243, 238, 233);
+}
+
+.hourly-view-container {
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.hourly-table {
+  width: 100%;
+  border: 2px solid grey;
+  border-radius: 10px;
+  padding-inline: 10px;
+  font-size: 0.9rem;
+}
+
+.hourly-table th,
+.hourly-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: right;
+}
+
+.hourly-table th {
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.hourly-table th:first-child,
+.hourly-table td:first-child {
+  text-align: left;
+  color: #111827;
+  font-weight: 500;
+  padding-left: 0;
+}
+
+.hourly-table tbody tr:hover {
+  background-color: var(--page-bg);
 }
